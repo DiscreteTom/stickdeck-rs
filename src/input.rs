@@ -50,10 +50,7 @@ pub fn spawn(
     let input = client.input();
     input.init(false);
 
-    let mut all_deck_ctrl = poll(&single, 100, || match AllDeckControls::new(&input) {
-      Ok(c) => Some(c),
-      Err(_) => None,
-    });
+    let mut all_deck_ctrl = poll(&single, 100, || AllDeckControls::new(&input).ok());
 
     let input_handles = poll_input_handles(&single, &input, 100);
 
