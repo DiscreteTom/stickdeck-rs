@@ -1,0 +1,90 @@
+"In Game Actions"
+{
+  "actions"
+  {
+    "AllDeckControls"
+    {
+      "title"     "#Set_AllDeckControls"
+      "Button"
+      {
+        "btn_a"         "#Action_BtnA"
+        "btn_b"         "#Action_BtnB"
+        "btn_x"         "#Action_BtnX"
+        "btn_y"         "#Action_BtnY"
+        "btn_lb"        "#Action_BtnLB"
+        "btn_rb"        "#Action_BtnRB"
+        "btn_l4"        "#Action_BtnL4"
+        "btn_r4"        "#Action_BtnR4"
+        "btn_l5"        "#Action_BtnL5"
+        "btn_r5"        "#Action_BtnR5"
+        "btn_start"     "#Action_BtnStart"
+        "btn_select"    "#Action_BtnSelect"
+      }
+      "AnalogTrigger"
+      {
+        "left_trigger"      "#Action_LT"
+        "right_trigger"     "#Action_RT"
+      }
+      "StickPadGyro"
+      {
+        "Move1"
+        {
+          "title"         "#Action_Move1"
+          "input_mode"    "joystick_move"
+        }
+        "Move2"
+        {
+          "title"         "#Action_Move2"
+          "input_mode"    "joystick_move"
+        }
+        "Move3"
+        {
+          "title"         "#Action_Move3"
+          "input_mode"    "joystick_move"
+        }
+        "Mouse1"
+        {
+          "title"         "#Action_Mouse1"
+          "input_mode"    "absolute_mouse"
+        }
+        "Mouse2"
+        {
+          "title"         "#Action_Mouse2"
+          "input_mode"    "absolute_mouse"
+        }
+        "Mouse3"
+        {
+          "title"         "#Action_Mouse3"
+          "input_mode"    "absolute_mouse"
+        }
+      }
+    }
+  }
+  "localization"
+  {
+    "english"
+    {
+      "Set_AllDeckControls"     "All Deck Controls"
+      "Action_BtnA"             "A Button"
+      "Action_BtnB"             "B Button"
+      "Action_BtnX"             "X Button"
+      "Action_BtnY"             "Y Button"
+      "Action_BtnLB"            "Left Bumper(LB)"
+      "Action_BtnRB"            "Right Bumper(RB)"
+      "Action_BtnL4"            "L4 Button"
+      "Action_BtnR4"            "R4 Button"
+      "Action_BtnL5"            "L5 Button"
+      "Action_BtnR5"            "R5 Button"
+      "Action_BtnStart"         "Start Button"
+      "Action_BtnSelect"        "Select Button"
+      "Action_LT"               "Left Trigger"
+      "Action_RT"               "Right Trigger"
+      "Action_Move1"            "Move 1"
+      "Action_Move2"            "Move 2"
+      "Action_Move3"            "Move 3"
+      "Action_Mouse1"           "Mouse 1"
+      "Action_Mouse2"           "Mouse 2"
+      "Action_Mouse3"           "Mouse 3"
+    }
+  }
+}
