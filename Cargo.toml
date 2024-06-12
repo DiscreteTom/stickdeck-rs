@@ -4,11 +4,11 @@ version = "0.1.0"
 edition = "2021"
 
 [[bin]]
-name = "deck"
+name = "stickdeck"
 path = "src/deck.rs"
 
 [[bin]]
-name = "win"
+name = "stickdeck-win"
 path = "src/win.rs"
 
 [dependencies]
