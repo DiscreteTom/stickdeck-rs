@@ -1,9 +1,10 @@
-mod action_repo;
-mod all_deck_ctrl;
 mod client;
 mod input;
+mod input_action;
 mod serde;
 mod ui;
+mod utils;
+mod xbox_ctrl;
 
 use std::net::SocketAddr;
 use std::sync::mpsc;

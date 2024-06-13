@@ -1,4 +1,4 @@
-use crate::all_deck_ctrl::AllDeckControls;
+use crate::xbox_ctrl::XBoxControls;
 use std::{
   sync::{mpsc, Arc, Mutex},
   thread,
@@ -52,7 +52,7 @@ pub fn spawn(
     let input = client.input();
     input.init(false);
 
-    let mut all_deck_ctrl = poll(&single, 100, || AllDeckControls::new(&input).ok());
+    let mut all_deck_ctrl = poll(&single, 100, || XBoxControls::new(&input).ok());
 
     let input_handles = poll_input_handles(&single, &input, 100);
 
