@@ -1,3 +1,4 @@
+mod serde;
 mod server;
 
 use std::{sync::mpsc, thread};
