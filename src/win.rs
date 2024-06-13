@@ -8,16 +8,13 @@ fn main() {
   let client = Client::connect().expect("Failed to connect to the ViGEmBus driver");
   let id = TargetId::XBOX360_WIRED;
   let mut target = Xbox360Wired::new(client, id);
-
-  // Plugin the virtual controller
   target
     .plugin()
     .expect("Failed to plugin the virtual controller");
-
-  // Wait for the virtual controller to be ready to accept updates
   target
     .wait_ready()
     .expect("Failed to wait for the virtual controller to be ready");
+  println!("Virtual controller is ready");
 
   let (action_tx, action_rx) = mpsc::channel();
 
