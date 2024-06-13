@@ -6,6 +6,7 @@ use std::{
 };
 use steamworks::{Client, ClientManager, Input, SResult, SingleClient};
 use steamworks_sys::InputHandle_t;
+use vigem_client::{XButtons, XGamepad};
 
 /// Run a function until it returns a value.
 /// If the function returns [`None`], wait for the specified interval and run the Steam callbacks.
@@ -43,6 +44,7 @@ pub fn spawn(
   interval_ms: u64,
   update_lock: Arc<Mutex<bool>>,
   tx: mpsc::Sender<String>,
+  net_tx: mpsc::Sender<XGamepad>,
 ) -> SResult<()> {
   let (client, single) = Client::init_app(app_id)?;
 
@@ -74,6 +76,37 @@ pub fn spawn(
         .unwrap();
         *update = false;
       }
+
+      let mut gamepad = XGamepad::default();
+      if all_deck_ctrl.btn_a.borrow().data.unwrap().bState {
+        gamepad.buttons.raw |= XButtons::A;
+      }
+      if all_deck_ctrl.btn_b.borrow().data.unwrap().bState {
+        gamepad.buttons.raw |= XButtons::B;
+      }
+      if all_deck_ctrl.btn_x.borrow().data.unwrap().bState {
+        gamepad.buttons.raw |= XButtons::X;
+      }
+      if all_deck_ctrl.btn_y.borrow().data.unwrap().bState {
+        gamepad.buttons.raw |= XButtons::Y;
+      }
+      if all_deck_ctrl.btn_start.borrow().data.unwrap().bState {
+        gamepad.buttons.raw |= XButtons::START;
+      }
+      if all_deck_ctrl.btn_select.borrow().data.unwrap().bState {
+        gamepad.buttons.raw |= XButtons::BACK;
+      }
+      if all_deck_ctrl.btn_lb.borrow().data.unwrap().bState {
+        gamepad.buttons.raw |= XButtons::LB;
+      }
+      if all_deck_ctrl.btn_rb.borrow().data.unwrap().bState {
+        gamepad.buttons.raw |= XButtons::RB;
+      }
+      gamepad.left_trigger = (all_deck_ctrl.lt.borrow().data.unwrap().x * 255.0) as u8;
+      gamepad.right_trigger = (all_deck_ctrl.rt.borrow().data.unwrap().x * 255.0) as u8;
+      // TODO: more
+
+      net_tx.send(gamepad).unwrap();
 
       None as Option<()> // run forever
     });
