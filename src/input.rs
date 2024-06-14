@@ -26,13 +26,13 @@ pub fn spawn(
     input.init(false);
 
     // try to init controls from vdf
-    let xbox = poll(&single, 100, retry(100, || XBoxControls::new(&input).ok()));
+    let xbox = poll(&single, 100, retry(10, || XBoxControls::new(&input).ok()));
 
     // try to get input handles (input devices)
     let input_handles = poll(
       &single,
       100,
-      retry(100, || {
+      retry(10, || {
         let handles = input.get_connected_controllers();
         if !handles.is_empty() {
           // println!("num of input handles: {:?}", handles.len());
