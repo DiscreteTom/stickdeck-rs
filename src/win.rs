@@ -1,7 +1,7 @@
 mod serde;
 mod server;
 
-use std::{sync::mpsc, thread};
+use std::sync::mpsc;
 use vigem_client::{Client, TargetId, Xbox360Wired};
 
 fn main() {
@@ -18,7 +18,7 @@ fn main() {
 
   let (action_tx, action_rx) = mpsc::channel();
 
-  thread::spawn(move || server::start(7777, action_tx));
+  server::spawn(7777, action_tx);
 
   loop {
     let data = action_rx

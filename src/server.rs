@@ -22,16 +22,18 @@ fn handle_client(mut stream: TcpStream, tx: mpsc::Sender<XGamepad>) {
   }
 }
 
-pub fn start(port: u16, tx: mpsc::Sender<XGamepad>) {
+pub fn spawn(port: u16, tx: mpsc::Sender<XGamepad>) {
   let listener =
     TcpListener::bind(SocketAddr::from(([0, 0, 0, 0], port))).expect("Failed to bind to address");
 
   println!("Server listening on port {}", port);
 
-  for stream in listener.incoming() {
-    let stream = stream.expect("Failed to accept connection");
-    let tx = tx.clone();
-    println!("New client connected");
-    thread::spawn(move || handle_client(stream, tx));
-  }
+  thread::spawn(move || {
+    for stream in listener.incoming() {
+      let stream = stream.expect("Failed to accept connection");
+      let tx = tx.clone();
+      println!("New client connected");
+      thread::spawn(move || handle_client(stream, tx));
+    }
+  });
 }
