@@ -6,7 +6,7 @@ use steamworks_sys::{uint64, InputAnalogActionData_t, InputDigitalActionData_t, 
 pub struct InputAction<Data> {
   pub name: &'static str,
   pub handle: uint64,
-  pub _phantom: PhantomData<Data>,
+  _phantom: PhantomData<Data>,
 }
 
 pub type InputAnalogAction = InputAction<InputAnalogActionData_t>;
