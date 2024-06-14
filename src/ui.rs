@@ -44,8 +44,7 @@ impl Application for App {
   }
 
   fn title(&self) -> String {
-    // TODO: update title by action set
-    String::from("Kontroller - All Deck Controls")
+    "Stickdeck".into()
   }
 
   fn subscription(&self) -> iced::Subscription<Self::Message> {
@@ -55,7 +54,12 @@ impl Application for App {
   fn update(&mut self, message: Self::Message) -> Command<Self::Message> {
     match message {
       Message::Update => {
-        self.set_update();
+        let mut update_lock = self.flags.update_lock.lock().unwrap();
+        // set to true if not already set
+        if !*update_lock {
+          *update_lock = true;
+        }
+        // wait for the input thread to update the content
         self.content = self.flags.rx.recv().unwrap();
       }
       Message::Exit => {
@@ -74,17 +78,6 @@ impl Application for App {
       text(&self.content).size(5)
     ]
     .into()
-  }
-}
-
-impl App {
-  fn set_update(&mut self) {
-    let mut update_lock = self.flags.update_lock.lock().unwrap();
-
-    // set to true if not already set
-    if !*update_lock {
-      *update_lock = true;
-    }
   }
 }
 
