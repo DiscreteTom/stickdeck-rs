@@ -25,7 +25,7 @@ fn main() {
       .recv()
       .expect("Failed to receive data from the server");
 
-    println!("Received data: {:?}", data);
+    // println!("{:?}", data);
 
     target
       .update(&data)

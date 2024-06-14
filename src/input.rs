@@ -98,6 +98,8 @@ pub fn spawn(
           gamepad.thumb_ry = (data.y * 32767.0) as i16;
         });
 
+        // println!("{:?}", std::time::SystemTime::now());
+        // println!("{:?}", gamepad);
         net_tx.send(gamepad).expect("Failed to send gamepad data");
 
         ui_str.map(|s| {
