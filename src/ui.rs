@@ -59,6 +59,8 @@ impl Application for App {
         if !*update_lock {
           *update_lock = true;
         }
+        // drop the lock to prevent deadlock
+        drop(update_lock);
         // wait for the input thread to update the content
         self.content = self.flags.rx.recv().unwrap();
       }
