@@ -10,7 +10,6 @@ use std::net::SocketAddr;
 use std::sync::mpsc;
 use std::sync::Arc;
 use std::sync::Mutex;
-use std::thread;
 
 fn main() {
   let update_lock = Arc::new(Mutex::new(false));
@@ -18,7 +17,7 @@ fn main() {
 
   let (net_tx, net_rx) = mpsc::channel();
 
-  thread::spawn(move || client::start(SocketAddr::from(([192, 168, 1, 7], 7777)), net_rx));
+  client::spawn(SocketAddr::from(([192, 168, 1, 7], 7777)), net_rx);
 
   input::spawn(
     480, // TODO: replace 480 with the real AppID
