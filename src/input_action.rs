@@ -3,18 +3,18 @@ use std::marker::PhantomData;
 use steamworks::{ClientManager, Input};
 use steamworks_sys::{uint64, InputAnalogActionData_t, InputDigitalActionData_t, InputHandle_t};
 
-pub struct Action<Data> {
+pub struct InputAction<Data> {
   pub name: &'static str,
   pub handle: uint64,
   pub _phantom: PhantomData<Data>,
 }
 
-pub type AnalogAction = Action<InputAnalogActionData_t>;
-pub type DigitalAction = Action<InputDigitalActionData_t>;
+pub type InputAnalogAction = InputAction<InputAnalogActionData_t>;
+pub type InputDigitalAction = InputAction<InputDigitalActionData_t>;
 
-impl Action<InputAnalogActionData_t> {
+impl InputAnalogAction {
   /// Create a new analog action.
-  /// Return [`Ok`] if the handle is valid.
+  /// Return [`Err`] if the handle is invalid.
   pub fn new(input: &Input<ClientManager>, name: &'static str) -> Result<Self, ()> {
     Ok(Self {
       name,
@@ -22,20 +22,11 @@ impl Action<InputAnalogActionData_t> {
       _phantom: PhantomData,
     })
   }
-
-  /// Refresh the action data.
-  pub fn update(
-    &mut self,
-    input: &Input<ClientManager>,
-    input_handle: InputHandle_t,
-  ) -> InputAnalogActionData_t {
-    input.get_analog_action_data(input_handle, self.handle)
-  }
 }
 
-impl Action<InputDigitalActionData_t> {
+impl InputDigitalAction {
   /// Create a new digital action.
-  /// Return [`Ok`] if the handle is valid.
+  /// Return [`Err`] if the handle is invalid.
   pub fn new(input: &Input<ClientManager>, name: &'static str) -> Result<Self, ()> {
     Ok(Self {
       name,
@@ -43,13 +34,45 @@ impl Action<InputDigitalActionData_t> {
       _phantom: PhantomData,
     })
   }
+}
 
-  /// Refresh the action data.
-  pub fn update(
-    &mut self,
+pub trait UpdatableInputAction<Data> {
+  /// Retrieve the input action's latest data.
+  fn update(&self, input: &Input<ClientManager>, input_handle: InputHandle_t) -> Data;
+}
+
+impl UpdatableInputAction<InputAnalogActionData_t> for InputAnalogAction {
+  fn update(
+    &self,
+    input: &Input<ClientManager>,
+    input_handle: InputHandle_t,
+  ) -> InputAnalogActionData_t {
+    input.get_analog_action_data(input_handle, self.handle)
+  }
+}
+
+impl UpdatableInputAction<InputDigitalActionData_t> for InputDigitalAction {
+  fn update(
+    &self,
     input: &Input<ClientManager>,
     input_handle: InputHandle_t,
   ) -> InputDigitalActionData_t {
     input.get_digital_action_data(input_handle, self.handle)
+  }
+}
+
+pub trait InputActionData {
+  fn is_active(&self) -> bool;
+}
+
+impl InputActionData for InputAnalogActionData_t {
+  fn is_active(&self) -> bool {
+    self.bActive
+  }
+}
+
+impl InputActionData for InputDigitalActionData_t {
+  fn is_active(&self) -> bool {
+    self.bActive
   }
 }
