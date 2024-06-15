@@ -74,11 +74,11 @@ impl Application for App {
 
   fn view(&self) -> Element<Message> {
     column![
-      button(text("Exit").size(50))
-        .height(100)
+      button(text("Exit").size(10))
+        .height(10)
         .on_press(Message::Exit)
         .width(Length::Fill),
-      text(&self.content).size(20)
+      text(&self.content).size(5)
     ]
     .into()
   }
