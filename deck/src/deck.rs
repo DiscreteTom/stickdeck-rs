@@ -11,12 +11,15 @@ use iced::{
 };
 use input::InputConfig;
 use local_ip_address::local_ip;
-use std::{net::IpAddr, sync::mpsc, time::Duration};
+use std::{env, net::IpAddr, sync::mpsc, time::Duration};
 
 fn main() {
   let (input_config_tx, input_config_rx) = mpsc::channel();
   input::spawn(
-    480, // TODO: replace 480 with the real AppID
+    env::args()
+      .nth(1)
+      .and_then(|s| s.parse().ok())
+      .unwrap_or(480),
     input_config_rx,
   )
   .expect("Failed to spawn the input thread");
