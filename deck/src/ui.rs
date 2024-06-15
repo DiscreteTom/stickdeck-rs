@@ -53,7 +53,11 @@ impl Application for App {
   fn update(&mut self, message: Self::Message) -> Command<Self::Message> {
     match message {
       Message::Update => {
-        let mut update_lock = self.flags.update_lock.lock().unwrap();
+        let mut update_lock = self
+          .flags
+          .update_lock
+          .lock()
+          .expect("Failed to lock update lock from the UI thread");
         // set to true if not already set
         if !*update_lock {
           *update_lock = true;
@@ -61,7 +65,11 @@ impl Application for App {
         // drop the lock to prevent deadlock
         drop(update_lock);
         // wait for the input thread to update the content
-        self.content = self.flags.rx.recv().unwrap();
+        self.content = self
+          .flags
+          .rx
+          .recv()
+          .expect("Failed to receive data from the input thread");
       }
       Message::Exit => {
         std::process::exit(0);

@@ -17,7 +17,7 @@ pub fn spawn(
   app_id: u32,
   interval_ms: u64,
   update_lock: Arc<Mutex<bool>>,
-  tx: mpsc::Sender<String>,
+  ui_tx: mpsc::Sender<String>,
   net_tx: mpsc::Sender<XGamepad>,
 ) -> SResult<()> {
   let (client, single) = Client::init_app(app_id)?;
@@ -53,7 +53,9 @@ pub fn spawn(
       interval_ms,
       forever(|| {
         let mut gamepad = XGamepad::default();
-        let mut update_ui = update_lock.lock().unwrap();
+        let mut update_ui = update_lock // TODO: use channel instead of mutex
+          .lock()
+          .expect("Failed to lock update lock from the input thread");
         let mut ui_str = update_ui.then(|| String::new());
 
         let mut ctx = (&input, input_handles[0], &mut ui_str);
@@ -106,7 +108,7 @@ pub fn spawn(
 
         ui_str.map(|s| {
           // UI requested update
-          tx.send(s).expect("Failed to send UI data");
+          ui_tx.send(s).expect("Failed to send UI data");
           *update_ui = false;
         });
       }),
@@ -130,7 +132,7 @@ fn poll<R>(single: &SingleClient, interval_ms: u64, mut f: impl FnMut() -> Optio
   }
 }
 
-/// Make `f` retry-able for `n` times before panicking.
+/// Make `f` retry-able for `n` times before panicking when [`poll`]ed.
 fn retry<R>(mut n: usize, mut f: impl FnMut() -> Option<R>) -> impl FnMut() -> Option<R> {
   move || {
     if n == 0 {
@@ -141,7 +143,7 @@ fn retry<R>(mut n: usize, mut f: impl FnMut() -> Option<R>) -> impl FnMut() -> O
   }
 }
 
-/// Wrap a function to run forever when polled.
+/// Wrap a function to run forever when [`poll`]ed.
 fn forever(mut f: impl FnMut()) -> impl FnMut() -> Option<()> {
   move || {
     f();
@@ -195,6 +197,7 @@ fn handle_mouse(n: f32, reverse: bool, mut cb: impl FnMut(i16)) {
 
   let sensitivity = 10000.0; // TODO: make this configurable
 
+  // crop the result to [-32767, 32767]
   let mapped = (n * sensitivity).max(-32767.0).min(32767.0) as i16;
 
   cb(if reverse { -mapped } else { mapped });
