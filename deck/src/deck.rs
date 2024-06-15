@@ -93,18 +93,18 @@ impl Application for App {
         )
         .on_press(Message::Exit)
         .width(Length::Fill),
-        text(&format!(
-          "Input Update Interval: {}ms",
-          self.input_update_interval_ms
-        ))
-        .size(5),
         column![
+          text(&format!(
+            "Input Update Interval: {}ms",
+            self.input_update_interval_ms
+          ))
+          .size(5),
           slider(1.0..=50.0, self.input_update_interval_ms as f64, |v| {
             Message::SetInputUpdateInterval(v as u64)
           })
           .step(1.0),
         ]
-        .padding([0, 20]),
+        .padding([4, 0]),
         button(
           text("Start Server")
             .size(5)
@@ -114,6 +114,7 @@ impl Application for App {
         .on_press(Message::StartServer)
         .width(Length::Fill),
       ]
+      .padding([4, 20])
       .into(),
       State::Started { .. } => column![
         button(
@@ -124,8 +125,14 @@ impl Application for App {
         )
         .on_press(Message::Exit)
         .width(Length::Fill),
-        text(&self.content).size(5)
+        text(&format!(
+          "=== Server is listening at {}:{} ===",
+          self.local_ip, self.port
+        ))
+        .size(5),
+        text(&self.content).size(4)
       ]
+      .padding([4, 20])
       .into(),
     }
   }
@@ -164,12 +171,7 @@ impl Application for App {
           update_tx.send(()).expect("Failed to send update signal");
           ui_rx
             .recv()
-            .map(|content| {
-              self.content = format!(
-                "Server is listening at {}:{}\n{}",
-                self.local_ip, self.port, content
-              )
-            })
+            .map(|content| self.content = content)
             .expect("Failed to receive data from the input thread");
         }
       }
