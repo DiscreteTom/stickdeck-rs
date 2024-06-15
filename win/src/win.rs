@@ -1,7 +1,7 @@
 mod server;
 
 use local_ip_address::local_ip;
-use std::{net::SocketAddr, sync::mpsc};
+use std::{env, net::SocketAddr, sync::mpsc};
 use vigem_client::{Client, TargetId, Xbox360Wired};
 
 fn main() {
@@ -19,7 +19,13 @@ fn main() {
   let (action_tx, action_rx) = mpsc::channel();
 
   server::spawn(
-    SocketAddr::new(local_ip().expect("Failed to get local ip address"), 7777), // TODO: make port configurable
+    SocketAddr::new(
+      local_ip().expect("Failed to get local ip address"),
+      env::var("STICKDECK_PORT")
+        .ok()
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(7777),
+    ),
     action_tx,
   );
 
