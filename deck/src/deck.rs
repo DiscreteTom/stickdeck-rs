@@ -6,7 +6,7 @@ mod utils;
 use iced::{
   alignment::Horizontal,
   executor, time,
-  widget::{button, column, row, slider, text},
+  widget::{button, column, slider, text},
   window, Application, Command, Element, Length, Settings, Theme,
 };
 use input::InputConfig;
@@ -90,13 +90,18 @@ impl Application for App {
         )
         .on_press(Message::Exit)
         .width(Length::Fill),
-        row![
-          text("Input Update Interval (ms)").size(5),
+        text(&format!(
+          "Input Update Interval: {}ms",
+          self.input_update_interval_ms
+        ))
+        .size(5),
+        column![
           slider(1.0..=50.0, self.input_update_interval_ms as f64, |v| {
             Message::SetInputUpdateInterval(v as u64)
           })
           .step(1.0),
-        ],
+        ]
+        .padding([0, 20]),
         button(
           text("Start Server")
             .size(5)
