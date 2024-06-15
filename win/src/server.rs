@@ -9,17 +9,15 @@ use vigem_client::{XButtons, XGamepad};
 fn handle_client(mut stream: TcpStream, tx: mpsc::Sender<XGamepad>) {
   let mut buf = [0; 12];
 
-  loop {
-    stream
-      .read_exact(&mut buf)
-      .expect("Failed to read data from the client");
-
+  while let Ok(_) = stream.read_exact(&mut buf) {
     // println!("{:?}", std::time::SystemTime::now());
     // println!("{:?}", buf);
 
     tx.send(deserialize(&buf))
       .expect("Failed to send data to the main thread");
   }
+
+  println!("Client disconnected");
 }
 
 pub fn spawn(addr: SocketAddr, tx: mpsc::Sender<XGamepad>) {
