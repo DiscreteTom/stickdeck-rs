@@ -1,6 +1,6 @@
 mod client;
 
-use std::sync::mpsc;
+use std::{env, sync::mpsc};
 use vigem_client::{Client, TargetId, Xbox360Wired};
 
 fn main() {
@@ -18,9 +18,15 @@ fn main() {
 
   let (gamepad_tx, gamepad_rx) = mpsc::channel();
 
-  // TODO: customizable server address
   println!("Connecting to the server...");
-  client::spawn(&format!("{}:{}", "steamdeck", 7777), gamepad_tx);
+  client::spawn(
+    &format!(
+      "{}:{}",
+      env::args().nth(1).unwrap_or("steamdeck".to_string()),
+      7777
+    ),
+    gamepad_tx,
+  );
 
   while let Ok(data) = gamepad_rx.recv() {
     // println!("{:?}", data);
