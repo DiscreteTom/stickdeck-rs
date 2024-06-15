@@ -5,13 +5,14 @@ use std::{env, net::SocketAddr, sync::mpsc};
 use vigem_client::{Client, TargetId, Xbox360Wired};
 
 fn main() {
-  let client = Client::connect().expect("Failed to connect to the ViGEmBus driver");
-  let id = TargetId::XBOX360_WIRED;
-  let mut target = Xbox360Wired::new(client, id);
-  target
+  let mut xbox = Xbox360Wired::new(
+    Client::connect().expect("Failed to connect to the ViGEmBus driver"),
+    TargetId::XBOX360_WIRED,
+  );
+  xbox
     .plugin()
     .expect("Failed to plugin the virtual controller");
-  target
+  xbox
     .wait_ready()
     .expect("Failed to wait for the virtual controller to be ready");
   println!("Virtual controller is ready");
@@ -36,7 +37,7 @@ fn main() {
 
     // println!("{:?}", data);
 
-    target
+    xbox
       .update(&data)
       .expect("Failed to update the virtual controller");
   }
