@@ -78,26 +78,28 @@ pub fn spawn(
 
         // analog actions
         update_input(&xbox.lt, &mut ctx, |data| {
-          gamepad.left_trigger = (data.x * 255.0) as u8
+          gamepad.left_trigger = f32_to_u8(data.x)
         });
         update_input(&xbox.rt, &mut ctx, |data| {
-          gamepad.right_trigger = (data.x * 255.0) as u8
+          gamepad.right_trigger = f32_to_u8(data.x)
         });
         update_input(&xbox.l_move, &mut ctx, |data| {
-          gamepad.thumb_lx = (data.x * 32767.0) as i16;
-          gamepad.thumb_ly = (data.y * 32767.0) as i16;
+          gamepad.thumb_lx = f32_to_i16(data.x);
+          gamepad.thumb_ly = f32_to_i16(data.y);
         });
         update_input(&xbox.l_mouse, &mut ctx, |data| {
-          gamepad.thumb_lx = (data.x * 32767.0) as i16;
-          gamepad.thumb_ly = (data.y * 32767.0) as i16;
+          // only update if stick is not at 0
+          if_stick_not_0(data.x, |x| gamepad.thumb_lx = x);
+          if_stick_not_0(data.y, |y| gamepad.thumb_ly = y);
         });
         update_input(&xbox.r_move, &mut ctx, |data| {
-          gamepad.thumb_rx = (data.x * 32767.0) as i16;
-          gamepad.thumb_ry = (data.y * 32767.0) as i16;
+          gamepad.thumb_rx = f32_to_i16(data.x);
+          gamepad.thumb_ry = f32_to_i16(data.y);
         });
         update_input(&xbox.r_mouse, &mut ctx, |data| {
-          gamepad.thumb_rx = (data.x * 32767.0) as i16;
-          gamepad.thumb_ry = (data.y * 32767.0) as i16;
+          // only update if stick is not at 0
+          if_stick_not_0(data.x, |x| gamepad.thumb_rx = x);
+          if_stick_not_0(data.y, |y| gamepad.thumb_ry = y);
         });
 
         // println!("{:?}", std::time::SystemTime::now());
@@ -175,4 +177,18 @@ fn update_btn(
       cb()
     }
   });
+}
+
+fn f32_to_u8(f: f32) -> u8 {
+  (f * 255.0) as u8
+}
+
+fn f32_to_i16(f: f32) -> i16 {
+  (f * 32767.0) as i16
+}
+
+fn if_stick_not_0(n: f32, mut cb: impl FnMut(i16)) {
+  if n != 0.0 {
+    cb(f32_to_i16(n));
+  }
 }
