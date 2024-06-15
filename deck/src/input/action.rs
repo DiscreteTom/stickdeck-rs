@@ -63,16 +63,29 @@ impl UpdatableInputAction<InputDigitalActionData_t> for InputDigitalAction {
 
 pub trait InputActionData {
   fn is_active(&self) -> bool;
+  fn to_string(&self) -> String;
 }
 
 impl InputActionData for InputAnalogActionData_t {
   fn is_active(&self) -> bool {
     self.bActive
   }
+  fn to_string(&self) -> String {
+    // since InputAnalogActionData_t is #[repr(packed)]
+    // we can't reference its fields directly
+    // so we have to copy them to local variables
+    let e_mode = self.eMode;
+    let x = self.x;
+    let y = self.y;
+    format!("Analog {{ mode: {:?}, x: {}, y: {} }}", e_mode, x, y)
+  }
 }
 
 impl InputActionData for InputDigitalActionData_t {
   fn is_active(&self) -> bool {
     self.bActive
+  }
+  fn to_string(&self) -> String {
+    format!("Digital {{ state: {} }}", self.bState)
   }
 }

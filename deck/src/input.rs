@@ -3,7 +3,7 @@ mod xbox;
 
 use crate::gamepad::{XButtons, XGamepad};
 use action::{InputAction, InputActionData, InputDigitalAction, UpdatableInputAction};
-use std::{fmt::Debug, sync::mpsc, thread, time::Duration};
+use std::{sync::mpsc, thread, time::Duration};
 use steamworks::{Client, ClientManager, Input, SResult, SingleClient};
 use steamworks_sys::InputHandle_t;
 use xbox::XBoxControls;
@@ -147,7 +147,7 @@ fn forever(mut f: impl FnMut()) -> impl FnMut() -> Option<()> {
   }
 }
 
-fn update_input<Data: InputActionData + Debug>(
+fn update_input<Data: InputActionData>(
   action: &InputAction<Data>,
   (input, input_handle, ui_str): &mut (&Input<ClientManager>, InputHandle_t, &mut Option<String>),
   mut cb: impl FnMut(&Data),
@@ -158,7 +158,7 @@ fn update_input<Data: InputActionData + Debug>(
   if data.is_active() {
     ui_str
       .as_mut()
-      .map(|s| s.push_str(&format!("{}: {:?}\n", action.name, data)));
+      .map(|s| s.push_str(&format!("{}: {}\n", action.name, data.to_string())));
     cb(&data);
   }
 }
