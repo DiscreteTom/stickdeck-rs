@@ -1,8 +1,8 @@
-use crate::{
-  input_action::{InputAction, InputActionData, UpdatableInputAction},
-  mock_gamepad::{XButtons, XGamepad},
-  xbox_ctrl::XBoxControls,
-};
+mod action;
+mod xbox;
+
+use crate::gamepad::{XButtons, XGamepad};
+use action::{InputAction, InputActionData, UpdatableInputAction};
 use std::{
   fmt::Debug,
   sync::{mpsc, Arc, Mutex},
@@ -11,6 +11,7 @@ use std::{
 };
 use steamworks::{Client, ClientManager, Input, SResult, SingleClient};
 use steamworks_sys::InputHandle_t;
+use xbox::XBoxControls;
 
 pub fn spawn(
   app_id: u32,

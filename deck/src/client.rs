@@ -1,4 +1,4 @@
-use crate::mock_gamepad::XGamepad;
+use crate::gamepad::XGamepad;
 use std::{
   io::Write,
   net::{SocketAddr, TcpStream},

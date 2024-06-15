@@ -1,4 +1,4 @@
-use super::input_action::{InputAnalogAction, InputDigitalAction};
+use super::action::{InputAnalogAction, InputDigitalAction};
 use crate::utils::check_handle;
 use steamworks::{ClientManager, Input};
 use steamworks_sys::InputHandle_t;

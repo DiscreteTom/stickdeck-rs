@@ -1,10 +1,8 @@
 mod client;
+mod gamepad;
 mod input;
-mod input_action;
-mod mock_gamepad;
 mod ui;
 mod utils;
-mod xbox_ctrl;
 
 use std::net::SocketAddr;
 use std::sync::mpsc;
