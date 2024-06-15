@@ -21,7 +21,7 @@ jobs:
           mkdir dist
           cp deck/target/release/stickdeck dist/
           chmod +x deck/scripts/setup.sh
-          cp deck/scripts/entry.sh dist/
+          cp deck/scripts/setup.sh dist/
           cp deck/stickdeck.vdf dist/
           cp deck/steamworks_sdk_154/libsteam_api.so
           zip -j stickdeck-${{ inputs.version }}.zip dist/*
