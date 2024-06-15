@@ -2,7 +2,7 @@ mod action;
 mod xbox;
 
 use crate::gamepad::{XButtons, XGamepad};
-use action::{InputAction, InputActionData, UpdatableInputAction};
+use action::{InputAction, InputActionData, InputDigitalAction, UpdatableInputAction};
 use std::{
   fmt::Debug,
   sync::{mpsc, Arc, Mutex},
@@ -61,20 +61,20 @@ pub fn spawn(
 
         // digital buttons
         let raw = &mut gamepad.buttons.raw;
-        update_input(&xbox.btn_up, &mut ctx, |_| *raw |= XButtons::UP);
-        update_input(&xbox.btn_down, &mut ctx, |_| *raw |= XButtons::DOWN);
-        update_input(&xbox.btn_left, &mut ctx, |_| *raw |= XButtons::LEFT);
-        update_input(&xbox.btn_right, &mut ctx, |_| *raw |= XButtons::RIGHT);
-        update_input(&xbox.btn_start, &mut ctx, |_| *raw |= XButtons::START);
-        update_input(&xbox.btn_back, &mut ctx, |_| *raw |= XButtons::BACK);
-        update_input(&xbox.btn_l_thumb, &mut ctx, |_| *raw |= XButtons::LTHUMB);
-        update_input(&xbox.btn_r_thumb, &mut ctx, |_| *raw |= XButtons::RTHUMB);
-        update_input(&xbox.btn_lb, &mut ctx, |_| *raw |= XButtons::LB);
-        update_input(&xbox.btn_rb, &mut ctx, |_| *raw |= XButtons::RB);
-        update_input(&xbox.btn_a, &mut ctx, |_| *raw |= XButtons::A);
-        update_input(&xbox.btn_b, &mut ctx, |_| *raw |= XButtons::B);
-        update_input(&xbox.btn_x, &mut ctx, |_| *raw |= XButtons::X);
-        update_input(&xbox.btn_y, &mut ctx, |_| *raw |= XButtons::Y);
+        update_btn(&xbox.btn_up, &mut ctx, || *raw |= XButtons::UP);
+        update_btn(&xbox.btn_down, &mut ctx, || *raw |= XButtons::DOWN);
+        update_btn(&xbox.btn_left, &mut ctx, || *raw |= XButtons::LEFT);
+        update_btn(&xbox.btn_right, &mut ctx, || *raw |= XButtons::RIGHT);
+        update_btn(&xbox.btn_start, &mut ctx, || *raw |= XButtons::START);
+        update_btn(&xbox.btn_back, &mut ctx, || *raw |= XButtons::BACK);
+        update_btn(&xbox.btn_l_thumb, &mut ctx, || *raw |= XButtons::LTHUMB);
+        update_btn(&xbox.btn_r_thumb, &mut ctx, || *raw |= XButtons::RTHUMB);
+        update_btn(&xbox.btn_lb, &mut ctx, || *raw |= XButtons::LB);
+        update_btn(&xbox.btn_rb, &mut ctx, || *raw |= XButtons::RB);
+        update_btn(&xbox.btn_a, &mut ctx, || *raw |= XButtons::A);
+        update_btn(&xbox.btn_b, &mut ctx, || *raw |= XButtons::B);
+        update_btn(&xbox.btn_x, &mut ctx, || *raw |= XButtons::X);
+        update_btn(&xbox.btn_y, &mut ctx, || *raw |= XButtons::Y);
 
         // analog actions
         update_input(&xbox.lt, &mut ctx, |data| {
@@ -163,4 +163,16 @@ fn update_input<Data: InputActionData + Debug>(
       .map(|s| s.push_str(&format!("{}: {:?}\n", action.name, data)));
     cb(&data);
   }
+}
+
+fn update_btn(
+  action: &InputDigitalAction,
+  ctx: &mut (&Input<ClientManager>, InputHandle_t, &mut Option<String>),
+  mut cb: impl FnMut(),
+) {
+  update_input(action, ctx, |data| {
+    if data.bState {
+      cb()
+    }
+  });
 }
