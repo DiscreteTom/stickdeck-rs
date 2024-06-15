@@ -16,13 +16,16 @@ pub fn spawn(addr: &str, rx: mpsc::Receiver<XGamepad>) {
     stream.set_nodelay(true).expect("Failed to set nodelay");
     println!("New client connected");
 
-    // TODO: optimize the code below
-    while let Ok(_) = rx
-      .recv()
-      .map_err(|_| ())
-      .and_then(|data| stream.write_all(&serialize(&data)).map_err(|_| ()))
-      .and_then(|_| stream.flush().map_err(|_| ()))
-    {}
+    // TODO: drop data before connected
+    while let Ok(data) = rx.recv() {
+      if stream
+        .write_all(&serialize(&data))
+        .and_then(|_| stream.flush())
+        .is_err()
+      {
+        break;
+      }
+    }
 
     println!("Client disconnected");
   });
