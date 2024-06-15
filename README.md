@@ -37,16 +37,6 @@ Next time you want to use Stickdeck, you only need to run `stickdeck` and click 
 
 ### Client Side (PC)
 
-> [!NOTE]
-> The Steam version and the GitHub version are totally the same,
-> but configuring via Steam is easier for most users.
-
-#### Install from Steam
-
-TODO
-
-#### Install from GitHub
-
 1. Install [ViGEm Bus Driver](https://github.com/nefarius/ViGEmBus) and **_restart_** your PC.
 2. Download `stickdeck-win-vX.X.X.zip` from the [latest release](https://github.com/DiscreteTom/stickdeck-rs/releases/latest) and extract it.
 3. Make sure your SteamDeck and your PC are in the same network.
@@ -57,7 +47,7 @@ TODO
 Next time you want to use Stickdeck, you only need to run `stickdeck-win.exe` (of course you should start the server first).
 
 > [!NOTE]
-> By default the client will try to connect `steamdeck:7777`. If you want to connect to a different server, you can run `stickdeck-win.exe <server-ip>`.
+> By default the client will try to connect `steamdeck:7777`. If you want to connect to a different server, you can run `stickdeck-win.exe [server-ip]`.
 > You can find the server IP on the first line of the stickdeck UI window while the server is started.
 
 ## Credit
