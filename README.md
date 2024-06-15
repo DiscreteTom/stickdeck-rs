@@ -10,6 +10,10 @@ Turn your SteamDeck into a joystick for your PC, with trackpad and gyro support!
 
 ### Server Side (SteamDeck)
 
+> [!NOTE]
+> The Steam version and the GitHub version are totally the same,
+> but configuring via Steam is easier for most users.
+
 #### Install from Steam
 
 TODO
@@ -32,6 +36,10 @@ Now the setup is done, proceed to the client side.
 > Next time you want to use Stickdeck, you only need to run `stickdeck` and click `Start Server`.
 
 ### Client Side (PC)
+
+> [!NOTE]
+> The Steam version and the GitHub version are totally the same,
+> but configuring via Steam is easier for most users.
 
 #### Install from Steam
 
