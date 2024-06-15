@@ -88,16 +88,16 @@ pub fn spawn(
           gamepad.thumb_ly = f32_to_i16(data.y);
         });
         update_input(&xbox.l_mouse, &mut ctx, |data| {
-          handle_mouse(data.x, |x| gamepad.thumb_lx = x);
-          handle_mouse(data.y, |y| gamepad.thumb_ly = y);
+          handle_mouse(data.x, false, |x| gamepad.thumb_lx = x);
+          handle_mouse(data.y, true, |y| gamepad.thumb_ly = y);
         });
         update_input(&xbox.r_move, &mut ctx, |data| {
           gamepad.thumb_rx = f32_to_i16(data.x);
           gamepad.thumb_ry = f32_to_i16(data.y);
         });
         update_input(&xbox.r_mouse, &mut ctx, |data| {
-          handle_mouse(data.x, |x| gamepad.thumb_rx = x);
-          handle_mouse(data.y, |y| gamepad.thumb_ry = y);
+          handle_mouse(data.x, false, |x| gamepad.thumb_rx = x);
+          handle_mouse(data.y, true, |y| gamepad.thumb_ry = y);
         });
 
         // println!("{:?}", std::time::SystemTime::now());
@@ -187,13 +187,15 @@ fn f32_to_i16(f: f32) -> i16 {
   (f * 32767.0) as i16
 }
 
-fn handle_mouse(n: f32, mut cb: impl FnMut(i16)) {
+fn handle_mouse(n: f32, reverse: bool, mut cb: impl FnMut(i16)) {
   if n == 0.0 {
     // if 0, don't override the stick value
     return;
   }
 
-  let sensitivity = 300.0; // TODO: make this configurable
+  let sensitivity = 10000.0; // TODO: make this configurable
 
-  cb((n * sensitivity).max(-32767.0).min(32767.0) as i16);
+  let mapped = (n * sensitivity).max(-32767.0).min(32767.0) as i16;
+
+  cb(if reverse { -mapped } else { mapped });
 }
