@@ -5,6 +5,7 @@
     "nodelay",
     "prost",
     "protos",
+    "repr",
     "RTHUMB",
     "steamdeck",
     "steamworks",
