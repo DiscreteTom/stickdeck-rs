@@ -3,12 +3,7 @@ mod xbox;
 
 use crate::gamepad::{XButtons, XGamepad};
 use action::{InputAction, InputActionData, InputDigitalAction, UpdatableInputAction};
-use std::{
-  fmt::Debug,
-  sync::{mpsc, Arc, Mutex},
-  thread,
-  time::Duration,
-};
+use std::{fmt::Debug, sync::mpsc, thread, time::Duration};
 use steamworks::{Client, ClientManager, Input, SResult, SingleClient};
 use steamworks_sys::InputHandle_t;
 use xbox::XBoxControls;
@@ -16,7 +11,7 @@ use xbox::XBoxControls;
 pub fn spawn(
   app_id: u32,
   interval_ms: u64,
-  update_lock: Arc<Mutex<bool>>,
+  update_rx: mpsc::Receiver<()>,
   ui_tx: mpsc::Sender<String>,
   net_tx: mpsc::Sender<XGamepad>,
 ) -> SResult<()> {
@@ -52,14 +47,11 @@ pub fn spawn(
       &single,
       interval_ms,
       forever(|| {
-        let mut gamepad = XGamepad::default();
-        let mut update_ui = update_lock // TODO: use channel instead of mutex
-          .lock()
-          .expect("Failed to lock update lock from the input thread");
-        let mut ui_str = update_ui.then(|| String::new());
-
+        // prepare ctx
+        let mut ui_str = update_rx.try_recv().ok().map(|_| String::new());
         let mut ctx = (&input, input_handles[0], &mut ui_str);
-        input.run_frame();
+
+        let mut gamepad = XGamepad::default();
 
         // digital buttons
         let raw = &mut gamepad.buttons.raw;
@@ -104,13 +96,9 @@ pub fn spawn(
 
         // println!("{:?}", std::time::SystemTime::now());
         // println!("{:?}", gamepad);
-        net_tx.send(gamepad).expect("Failed to send gamepad data");
 
-        ui_str.map(|s| {
-          // UI requested update
-          ui_tx.send(s).expect("Failed to send UI data");
-          *update_ui = false;
-        });
+        net_tx.send(gamepad).expect("Failed to send gamepad data");
+        ui_str.map(|s| ui_tx.send(s).expect("Failed to send UI data"));
       }),
     );
   });

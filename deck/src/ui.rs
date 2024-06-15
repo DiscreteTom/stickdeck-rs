@@ -4,10 +4,7 @@ use iced::{
   widget::{button, column, text},
   window, Application, Command, Element, Length, Settings, Theme,
 };
-use std::{
-  sync::{mpsc, Arc, Mutex},
-  time::Duration,
-};
+use std::{sync::mpsc, time::Duration};
 
 #[derive(Debug, Clone)]
 enum Message {
@@ -17,7 +14,7 @@ enum Message {
 
 struct Flags {
   update_interval_ms: u64,
-  update_lock: Arc<Mutex<bool>>,
+  update_tx: mpsc::Sender<()>,
   rx: mpsc::Receiver<String>,
 }
 
@@ -53,17 +50,11 @@ impl Application for App {
   fn update(&mut self, message: Self::Message) -> Command<Self::Message> {
     match message {
       Message::Update => {
-        let mut update_lock = self
+        self
           .flags
-          .update_lock
-          .lock()
-          .expect("Failed to lock update lock from the UI thread");
-        // set to true if not already set
-        if !*update_lock {
-          *update_lock = true;
-        }
-        // drop the lock to prevent deadlock
-        drop(update_lock);
+          .update_tx
+          .send(())
+          .expect("Failed to send update signal");
         // wait for the input thread to update the content
         self.content = self
           .flags
@@ -98,12 +89,12 @@ impl Application for App {
 /// Run the UI, block until the window is closed.
 pub fn run(
   update_interval_ms: u64,
-  update_lock: Arc<Mutex<bool>>,
+  update_tx: mpsc::Sender<()>,
   rx: mpsc::Receiver<String>,
 ) -> iced::Result {
   App::run(Settings::with_flags(Flags {
     update_interval_ms,
-    update_lock,
+    update_tx,
     rx,
   }))
 }

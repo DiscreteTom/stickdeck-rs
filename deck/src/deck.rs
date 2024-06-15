@@ -6,11 +6,9 @@ mod utils;
 
 use std::net::SocketAddr;
 use std::sync::mpsc;
-use std::sync::Arc;
-use std::sync::Mutex;
 
 fn main() {
-  let update_lock = Arc::new(Mutex::new(false));
+  let (update_tx, update_rx) = mpsc::channel();
   let (ui_tx, ui_rx) = mpsc::channel();
   let (net_tx, net_rx) = mpsc::channel();
 
@@ -20,16 +18,13 @@ fn main() {
   input::spawn(
     480, // TODO: replace 480 with the real AppID
     10,  // interval of polling input events // TODO: make this configurable
-    update_lock.clone(),
-    ui_tx,
-    net_tx,
+    update_rx, ui_tx, net_tx,
   )
   .expect("Failed to spawn input thread");
 
   ui::run(
     30, // interval of updating UI // TODO: make this configurable
-    update_lock,
-    ui_rx,
+    update_tx, ui_rx,
   )
   .expect("Failed to run the UI");
 }
