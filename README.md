@@ -35,7 +35,7 @@ Now the setup is done, proceed to the client side.
 2. Download `stickdeck-win-x.x.x.zip` from the [latest release](https://github.com/DiscreteTom/stickdeck-rs/releases/latest) and extract it.
 3. Make sure your SteamDeck and your PC are in the same network.
 4. Make sure your SteamDeck is running the server.
-5. Run `stickdeck-win.exe`. Once your see `Connected.` in the console, Stickdeck is ready.
+5. Run `stickdeck-win.exe`. Once your see `Virtual controller is ready` in the console, Stickdeck is ready.
 6. (Optional) If you want to test the controller, run `joy.cpl`.
 
 ## Credit
