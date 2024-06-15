@@ -44,6 +44,10 @@ TODO
 5. Run `stickdeck-win.exe`. Once your see `Virtual controller is ready` in the console, Stickdeck is ready.
 6. (Optional) If you want to test the controller, run `joy.cpl`.
 
+> [!NOTE]
+> By default the client will try to connect `steamdeck:7777`. If you want to connect to a different server, you can run `stickdeck-win.exe <server-ip>`.
+> You can find the server IP on the first line of the stickdeck UI window while the server is started.
+
 ## Credit
 
 - [ViGEm Bus Driver](https://github.com/nefarius/ViGEmBus)
