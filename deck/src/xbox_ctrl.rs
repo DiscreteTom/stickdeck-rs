@@ -53,7 +53,7 @@ impl XBoxControls {
 
       lt: InputAnalogAction::new(input, "left_trigger")?,
       rt: InputAnalogAction::new(input, "right_trigger")?,
-      l_move: InputAnalogAction::new(input, "LeftMove")?,
+      l_move: InputAnalogAction::new(input, "LeftMove")?, // TODO: unify name convention?
       l_mouse: InputAnalogAction::new(input, "LeftMouse")?,
       r_move: InputAnalogAction::new(input, "RightMove")?,
       r_mouse: InputAnalogAction::new(input, "RightMouse")?,

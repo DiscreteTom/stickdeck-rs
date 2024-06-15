@@ -1,7 +1,7 @@
 mod client;
 mod input;
 mod input_action;
-mod serde;
+mod mock_gamepad;
 mod ui;
 mod utils;
 mod xbox_ctrl;

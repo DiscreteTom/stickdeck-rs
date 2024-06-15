@@ -1,5 +1,6 @@
 use crate::{
   input_action::{InputAction, InputActionData, UpdatableInputAction},
+  mock_gamepad::{XButtons, XGamepad},
   xbox_ctrl::XBoxControls,
 };
 use std::{
@@ -10,7 +11,6 @@ use std::{
 };
 use steamworks::{Client, ClientManager, Input, SResult, SingleClient};
 use steamworks_sys::InputHandle_t;
-use vigem_client::{XButtons, XGamepad};
 
 pub fn spawn(
   app_id: u32,
@@ -56,6 +56,7 @@ pub fn spawn(
         let mut ui_str = update_ui.then(|| String::new());
 
         let mut ctx = (&input, input_handles[0], &mut ui_str);
+        input.run_frame();
 
         // digital buttons
         let raw = &mut gamepad.buttons.raw;
@@ -155,10 +156,10 @@ fn update_input<Data: InputActionData + Debug>(
   InputAction<Data>: UpdatableInputAction<Data>,
 {
   let data = action.update(input, *input_handle);
-  if data.is_active() {
-    ui_str
-      .as_mut()
-      .map(|s| s.push_str(&format!("{}: {:?}\n", action.name, data)));
-    cb(&data);
-  }
+  // if data.is_active() {
+  ui_str
+    .as_mut()
+    .map(|s| s.push_str(&format!("{}: {:?}\n", action.name, data)));
+  cb(&data);
+  // }
 }
