@@ -15,6 +15,7 @@ fn handle_client(mut stream: TcpStream, tx: mpsc::Sender<XGamepad>) {
       .expect("Failed to read data from the client");
 
     // println!("{:?}", std::time::SystemTime::now());
+    // println!("{:?}", buf);
 
     tx.send(deserialize(&buf))
       .expect("Failed to send data to the main thread");
