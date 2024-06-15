@@ -31,6 +31,12 @@ Now the setup is done, proceed to the client side.
 
 ### Client Side (PC)
 
+#### Install from Steam
+
+TODO
+
+#### Install from GitHub
+
 1. Install [ViGEm Bus Driver](https://github.com/nefarius/ViGEmBus) and **_restart_** your PC.
 2. Download `stickdeck-win-x.x.x.zip` from the [latest release](https://github.com/DiscreteTom/stickdeck-rs/releases/latest) and extract it.
 3. Make sure your SteamDeck and your PC are in the same network.
