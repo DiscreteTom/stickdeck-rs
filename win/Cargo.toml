@@ -9,4 +9,3 @@ path = "src/win.rs"
 
 [dependencies]
 vigem-client = "0.1"
-local-ip-address = "0.6.1"

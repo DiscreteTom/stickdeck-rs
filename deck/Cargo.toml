@@ -11,3 +11,4 @@ path = "src/deck.rs"
 steamworks-sys = "0.10.0"
 steamworks = "0.10.0"
 iced = { version = "0.10", features = ["smol"] }
+local-ip-address = "0.6.1"
