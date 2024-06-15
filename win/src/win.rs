@@ -1,6 +1,7 @@
 mod server;
 
-use std::sync::mpsc;
+use local_ip_address::local_ip;
+use std::{net::SocketAddr, sync::mpsc};
 use vigem_client::{Client, TargetId, Xbox360Wired};
 
 fn main() {
@@ -17,7 +18,10 @@ fn main() {
 
   let (action_tx, action_rx) = mpsc::channel();
 
-  server::spawn(7777, action_tx);
+  server::spawn(
+    SocketAddr::new(local_ip().expect("Failed to get local ip address"), 7777), // TODO: make port configurable
+    action_tx,
+  );
 
   loop {
     let data = action_rx
