@@ -179,10 +179,12 @@ fn update_btn(
   });
 }
 
+/// Convert f32 `[0, 1]` to u8 `[0, 255]`
 fn f32_to_u8(f: f32) -> u8 {
   (f * 255.0) as u8
 }
 
+/// Convert f32 `(-1, 1)` to i16 `[-32768, 32767]`
 fn f32_to_i16(f: f32) -> i16 {
   (f * 32767.0) as i16
 }
