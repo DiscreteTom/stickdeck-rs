@@ -17,7 +17,7 @@ TODO
 #### Install from GitHub
 
 1. **_Switch to Desktop Mode on SteamDeck. All the following steps are done on SteamDeck in the desktop mode._**
-2. Download `stickdeck-x.x.x.zip` from the [latest release](https://github.com/DiscreteTom/stickdeck-rs/releases/latest) and extract it.
+2. Download `stickdeck-vx.x.x.zip` from the [latest release](https://github.com/DiscreteTom/stickdeck-rs/releases/latest) and extract it.
 3. Run `setup.sh` in the extracted folder.
 4. Run `stickdeck` on SteamDeck, this should open a new window, but your input is not captured now. Close the window.
 5. Start `Steam` client (NOT `Returning to Gaming Mode`) in the Desktop Mode. In your library, you should find a game called `Spacewar`. [Edit its input mapping](https://partner.steamgames.com/doc/features/steam_controller/getting_started_for_devs#14). You should have a layout called `stickdeck`, edit it so that all the inputs are mapped to the correct game actions.
@@ -38,7 +38,7 @@ TODO
 #### Install from GitHub
 
 1. Install [ViGEm Bus Driver](https://github.com/nefarius/ViGEmBus) and **_restart_** your PC.
-2. Download `stickdeck-win-x.x.x.zip` from the [latest release](https://github.com/DiscreteTom/stickdeck-rs/releases/latest) and extract it.
+2. Download `stickdeck-win-vx.x.x.zip` from the [latest release](https://github.com/DiscreteTom/stickdeck-rs/releases/latest) and extract it.
 3. Make sure your SteamDeck and your PC are in the same network.
 4. Make sure your SteamDeck is running the server.
 5. Run `stickdeck-win.exe`. Once your see `Virtual controller is ready` in the console, Stickdeck is ready.
