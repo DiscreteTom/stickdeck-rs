@@ -31,9 +31,9 @@ TODO
    2. For trackpad and gyro, use `Left/Right Stick (as Absolute Mouse)`.
 7. Run `stickdeck` again, click `Start Server`, now you should see the input when you press buttons or move joysticks on SteamDeck.
 
-Now the setup is done, proceed to the client side.
+Now the setup is done, you can proceed to the client side.
 
-> Next time you want to use Stickdeck, you only need to run `stickdeck` and click `Start Server`.
+Next time you want to use Stickdeck, you only need to run `stickdeck` and click `Start Server`.
 
 ### Client Side (PC)
 
@@ -53,6 +53,8 @@ TODO
 4. Make sure your SteamDeck is running the server.
 5. Run `stickdeck-win.exe`. Once your see `Virtual controller is ready` in the console, Stickdeck is ready.
 6. (Optional) If you want to test the controller, run `joy.cpl`.
+
+Next time you want to use Stickdeck, you only need to run `stickdeck-win.exe` (of course you should start the server first).
 
 > [!NOTE]
 > By default the client will try to connect `steamdeck:7777`. If you want to connect to a different server, you can run `stickdeck-win.exe <server-ip>`.
