@@ -23,7 +23,7 @@ jobs:
           chmod +x deck/scripts/setup.sh
           cp deck/scripts/setup.sh dist/
           cp deck/stickdeck.vdf dist/
-          cp deck/steamworks_sdk_154/libsteam_api.so
+          cp deck/steamworks_sdk_154/libsteam_api.so dist/
           zip -j stickdeck-${{ inputs.version }}.zip dist/*
 
       # delete the asset if it already exists
