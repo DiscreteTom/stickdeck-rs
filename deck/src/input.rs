@@ -191,7 +191,9 @@ fn handle_mouse(n: f32, reverse: bool, mut cb: impl FnMut(i16)) {
     return;
   }
 
-  let sensitivity = 10000.0; // TODO: make this configurable
+  // TODO: make this configurable?
+  // actually user can directly modify the gyro/trackpad sensitivity in Steam
+  let sensitivity = 5000.0;
 
   // crop the result to [-32767, 32767]
   let mapped = (n * sensitivity).max(-32767.0).min(32767.0) as i16;
