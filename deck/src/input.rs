@@ -12,7 +12,7 @@ pub struct InputConfig {
   pub interval_ms: u64,
   pub update_rx: mpsc::Receiver<()>,
   pub ui_tx: mpsc::Sender<String>,
-  pub net_tx: mpsc::Sender<XGamepad>,
+  pub connected_rx: mpsc::Receiver<mpsc::Sender<XGamepad>>,
 }
 
 pub fn spawn(app_id: u32, input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> {
@@ -48,13 +48,19 @@ pub fn spawn(app_id: u32, input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> 
       interval_ms,
       update_rx,
       ui_tx,
-      net_tx,
+      connected_rx,
     } = input_rx.recv().expect("Failed to receive input data");
+    let mut net_tx = None;
 
     poll(
       &single,
       interval_ms,
       forever(|| {
+        // check if the client is connected
+        if net_tx.is_none() {
+          net_tx = connected_rx.try_recv().ok();
+        }
+
         // prepare ctx
         let mut ui_str = update_rx.try_recv().ok().map(|_| String::new());
         let mut ctx = (&input, input_handles[0], &mut ui_str);
@@ -105,7 +111,9 @@ pub fn spawn(app_id: u32, input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> 
         // println!("{:?}", std::time::SystemTime::now());
         // println!("{:?}", gamepad);
 
-        net_tx.send(gamepad).expect("Failed to send gamepad data");
+        net_tx
+          .as_ref()
+          .map(|tx| tx.send(gamepad).expect("Failed to send gamepad data"));
         ui_str.map(|s| ui_tx.send(s).expect("Failed to send UI data"));
       }),
     );

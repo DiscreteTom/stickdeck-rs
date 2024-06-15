@@ -142,9 +142,9 @@ impl Application for App {
       Message::StartServer => {
         let (update_tx, update_rx) = mpsc::channel();
         let (ui_tx, ui_rx) = mpsc::channel();
-        let (net_tx, net_rx) = mpsc::channel();
+        let (connected_tx, connected_rx) = mpsc::channel();
 
-        server::spawn(&format!("{}:{}", self.local_ip, self.port), net_rx);
+        server::spawn(&format!("{}:{}", self.local_ip, self.port), connected_tx);
 
         self
           .flags
@@ -153,7 +153,7 @@ impl Application for App {
             interval_ms: self.input_update_interval_ms,
             update_rx,
             ui_tx,
-            net_tx,
+            connected_rx,
           })
           .expect("Failed to send config to the input thread");
 
