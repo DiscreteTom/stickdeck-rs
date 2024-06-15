@@ -10,10 +10,13 @@ use xbox::XBoxControls;
 
 pub fn spawn(
   app_id: u32,
-  interval_ms: u64,
-  update_rx: mpsc::Receiver<()>,
-  ui_tx: mpsc::Sender<String>,
-  net_tx: mpsc::Sender<XGamepad>,
+  input_rx: mpsc::Receiver<(
+    // TODO: make this a struct
+    u64,
+    mpsc::Receiver<()>,
+    mpsc::Sender<String>,
+    mpsc::Sender<XGamepad>,
+  )>,
 ) -> SResult<()> {
   let (client, single) = Client::init_app(app_id)?;
 
@@ -42,6 +45,9 @@ pub fn spawn(
 
     // enable xbox control action set for the first input handle
     input.activate_action_set_handle(input_handles[0], xbox.handle);
+
+    let (interval_ms, update_rx, ui_tx, net_tx) =
+      input_rx.recv().expect("Failed to receive input data");
 
     poll(
       &single,
