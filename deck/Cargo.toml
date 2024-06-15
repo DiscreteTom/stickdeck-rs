@@ -5,7 +5,7 @@ edition = "2021"
 
 [[bin]]
 name = "stickdeck"
-path = "deck.rs"
+path = "src/deck.rs"
 
 [dependencies]
 steamworks-sys = "0.10.0"
