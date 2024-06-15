@@ -27,6 +27,7 @@ impl XButtons {
   /// Right shoulder button.
   pub const RB: u16 = 0x0200;
   /// Xbox guide button.
+  #[allow(dead_code)]
   pub const GUIDE: u16 = 0x0400;
   /// A button.
   pub const A: u16 = 0x1000;
