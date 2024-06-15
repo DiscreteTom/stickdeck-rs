@@ -3,39 +3,35 @@ mod gamepad;
 mod input;
 mod utils;
 
-use gamepad::XGamepad;
 use iced::{
   alignment::Horizontal,
   executor, time,
   widget::{button, column, text, text_input},
   window, Application, Command, Element, Length, Settings, Theme,
 };
+use input::InputConfig;
 use std::{sync::mpsc, time::Duration};
 
 fn main() {
-  let (input_tx, input_rx) = mpsc::channel();
+  let (input_config_tx, input_config_rx) = mpsc::channel();
   input::spawn(
     480, // TODO: replace 480 with the real AppID
-    input_rx,
+    input_config_rx,
   )
   .expect("Failed to spawn the input thread");
-  App::run(Settings::with_flags(Flags { input_tx })).expect("Failed to run the app");
+
+  App::run(Settings::with_flags(Flags { input_config_tx })).expect("Failed to run the app");
 }
 
 struct Flags {
-  input_tx: mpsc::Sender<(
-    u64,
-    mpsc::Receiver<()>,
-    mpsc::Sender<String>,
-    mpsc::Sender<XGamepad>,
-  )>,
+  input_config_tx: mpsc::Sender<InputConfig>,
 }
 
 enum State {
   Home,
   Connected {
     update_tx: mpsc::Sender<()>,
-    rx: mpsc::Receiver<String>,
+    ui_rx: mpsc::Receiver<String>,
   },
 }
 
@@ -89,26 +85,30 @@ impl Application for App {
       }
       Message::Connect => {
         let (update_tx, update_rx) = mpsc::channel();
-        let (ui_tx, rx) = mpsc::channel();
+        let (ui_tx, ui_rx) = mpsc::channel();
         let (net_tx, net_rx) = mpsc::channel();
 
         client::spawn(&self.addr, net_rx);
 
         self
           .flags
-          .input_tx
-          .send((
-            10, // interval of polling input events // TODO: make this configurable
-            update_rx, ui_tx, net_tx,
-          ))
+          .input_config_tx
+          .send(InputConfig {
+            interval_ms: 10, // make this configurable
+            update_rx,
+            ui_tx,
+            net_tx,
+          })
           .expect("Failed to send config to the input thread");
 
-        self.state = State::Connected { update_tx, rx };
+        self.state = State::Connected { update_tx, ui_rx };
       }
       Message::Update => {
-        if let State::Connected { update_tx, rx } = &self.state {
+        if let State::Connected { update_tx, ui_rx } = &self.state {
           update_tx.send(()).expect("Failed to send update signal");
-          rx.recv()
+          ui_rx
+            .recv()
+            .map(|content| self.content = content)
             .expect("Failed to receive data from the input thread");
         }
       }

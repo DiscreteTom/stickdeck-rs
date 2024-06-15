@@ -8,16 +8,14 @@ use steamworks::{Client, ClientManager, Input, SResult, SingleClient};
 use steamworks_sys::InputHandle_t;
 use xbox::XBoxControls;
 
-pub fn spawn(
-  app_id: u32,
-  input_rx: mpsc::Receiver<(
-    // TODO: make this a struct
-    u64,
-    mpsc::Receiver<()>,
-    mpsc::Sender<String>,
-    mpsc::Sender<XGamepad>,
-  )>,
-) -> SResult<()> {
+pub struct InputConfig {
+  pub interval_ms: u64,
+  pub update_rx: mpsc::Receiver<()>,
+  pub ui_tx: mpsc::Sender<String>,
+  pub net_tx: mpsc::Sender<XGamepad>,
+}
+
+pub fn spawn(app_id: u32, input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> {
   let (client, single) = Client::init_app(app_id)?;
 
   thread::spawn(move || {
@@ -46,8 +44,12 @@ pub fn spawn(
     // enable xbox control action set for the first input handle
     input.activate_action_set_handle(input_handles[0], xbox.handle);
 
-    let (interval_ms, update_rx, ui_tx, net_tx) =
-      input_rx.recv().expect("Failed to receive input data");
+    let InputConfig {
+      interval_ms,
+      update_rx,
+      ui_tx,
+      net_tx,
+    } = input_rx.recv().expect("Failed to receive input data");
 
     poll(
       &single,
