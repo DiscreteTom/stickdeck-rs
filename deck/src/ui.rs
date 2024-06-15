@@ -1,14 +1,13 @@
-use iced::executor;
-use iced::time;
-use iced::widget::{button, column, text};
-use iced::Element;
-use iced::Length;
-use iced::Settings;
-use iced::{Application, Command, Theme};
-use std::sync::mpsc;
-use std::sync::Arc;
-use std::sync::Mutex;
-use std::time::Duration;
+use iced::{
+  alignment::Horizontal,
+  executor, time,
+  widget::{button, column, text},
+  window, Application, Command, Element, Length, Settings, Theme,
+};
+use std::{
+  sync::{mpsc, Arc, Mutex},
+  time::Duration,
+};
 
 #[derive(Debug, Clone)]
 enum Message {
@@ -39,7 +38,7 @@ impl Application for App {
         flags,
         content: String::new(),
       },
-      Command::none(),
+      window::maximize(true),
     )
   }
 
@@ -74,10 +73,14 @@ impl Application for App {
 
   fn view(&self) -> Element<Message> {
     column![
-      button(text("Exit").size(10))
-        .height(10)
-        .on_press(Message::Exit)
-        .width(Length::Fill),
+      button(
+        text("Exit")
+          .size(5)
+          .horizontal_alignment(Horizontal::Center)
+          .width(Length::Fill)
+      )
+      .on_press(Message::Exit)
+      .width(Length::Fill),
       text(&self.content).size(5)
     ]
     .into()
