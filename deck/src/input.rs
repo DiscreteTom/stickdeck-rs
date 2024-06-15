@@ -156,10 +156,10 @@ fn update_input<Data: InputActionData + Debug>(
   InputAction<Data>: UpdatableInputAction<Data>,
 {
   let data = action.update(input, *input_handle);
-  // if data.is_active() {
-  ui_str
-    .as_mut()
-    .map(|s| s.push_str(&format!("{}: {:?}\n", action.name, data)));
-  cb(&data);
-  // }
+  if data.is_active() {
+    ui_str
+      .as_mut()
+      .map(|s| s.push_str(&format!("{}: {:?}\n", action.name, data)));
+    cb(&data);
+  }
 }
