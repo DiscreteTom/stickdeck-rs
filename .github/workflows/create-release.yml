@@ -1,0 +1,32 @@
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version of the release, should match an existing tag name. E.g. v0.1.0"
+        required: true
+
+env:
+  VERSION:
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # set the verion to the input. if the input is not set (triggered by tag), it will be the tag name
+      - run: echo "VERSION=${{ inputs.version || github.ref_name }}" >> $GITHUB_ENV
+
+      # create the release
+      - run: gh release create ${{ env.VERSION }} -t ${{ env.VERSION }} --verify-tag -n "See [CHANGELOG.md](https://github.com/DiscreteTom/stickdeck-rs/blob/main/CHANGELOG.md)."
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # build and upload artifacts to the release.
+      # this is a separate workflow so we can also run it manually
+      - run: gh workflow run build-and-upload-release-assets.yml --field version=${{ env.VERSION }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

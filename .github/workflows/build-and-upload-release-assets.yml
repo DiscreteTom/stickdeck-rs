@@ -1,0 +1,37 @@
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version of the release, should match an existing tag name. E.g. v0.1.0"
+        required: true
+
+jobs:
+  build-and-upload-release-assets:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+
+      # build the binary
+      - run: cd deck && cargo build --release
+
+      # zip files
+      - run: |
+          mkdir dist
+          cp deck/target/release/stickdeck dist/
+          chmod +x deck/scripts/setup.sh
+          cp deck/scripts/entry.sh dist/
+          cp deck/stickdeck.vdf dist/
+          cp deck/steamworks_sdk_154/libsteam_api.so
+          zip -j stickdeck-${{ inputs.version }}.zip dist/*
+
+      # delete the asset if it already exists
+      - run: gh release delete-asset ${{ inputs.version }} stickdeck-${{ inputs.version }}.zip -y || true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # upload the asset
+      - run: gh release upload ${{ inputs.version }} stickdeck-${{ inputs.version }}.zip
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
