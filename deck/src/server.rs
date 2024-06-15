@@ -1,28 +1,34 @@
 use crate::gamepad::XGamepad;
-use std::{io::Write, net::TcpListener, sync::mpsc, thread};
+use std::{net::UdpSocket, sync::mpsc, thread};
 
 pub fn spawn(addr: &str, rx: mpsc::Receiver<XGamepad>) {
-  let listener = TcpListener::bind(addr).expect(&format!("Failed to bind to address {}", addr));
-
+  let socket = UdpSocket::bind(addr).expect(&format!("Failed to bind to address {}", addr));
+  // set non blocking so we can poll the socket
+  socket
+    .set_nonblocking(true)
+    .expect("Failed to set non-blocking mode");
   println!("Server listening on {}", addr);
 
   thread::spawn(move || {
-    // only accept one client because we will consume the receiver
-    let mut stream = listener
-      .incoming()
-      .next()
-      .unwrap()
-      .expect("Failed to accept connection");
-    stream.set_nodelay(true).expect("Failed to set nodelay");
-    println!("New client connected");
+    let mut connected = false;
+    let mut buf = [0; 1];
+    while let Ok(data) = rx.recv() {
+      if !connected {
+        // poll the socket to try to get the client address
+        socket.recv_from(&mut buf).ok().map(|(_, addr)| {
+          socket
+            .connect(addr)
+            .expect("Failed to connect to the client");
+          connected = true
+        });
+      }
 
-    // TODO: optimize the code below
-    while let Ok(_) = rx
-      .recv()
-      .map_err(|_| ())
-      .and_then(|data| stream.write_all(&serialize(&data)).map_err(|_| ()))
-      .and_then(|_| stream.flush().map_err(|_| ()))
-    {}
+      if connected {
+        if socket.send(&serialize(&data)).is_err() {
+          break;
+        }
+      }
+    }
 
     println!("Client disconnected");
   });
