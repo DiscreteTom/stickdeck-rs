@@ -51,6 +51,7 @@ pub fn spawn(app_id: u32, input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> 
       connected_rx,
     } = input_rx.recv().expect("Failed to receive input data");
     let mut net_tx = None;
+    let mut last_gamepad = XGamepad::default();
 
     poll(
       &single,
@@ -111,9 +112,15 @@ pub fn spawn(app_id: u32, input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> 
         // println!("{:?}", std::time::SystemTime::now());
         // println!("{:?}", gamepad);
 
-        net_tx
-          .as_ref()
-          .map(|tx| tx.send(gamepad).expect("Failed to send gamepad data"));
+        // only send data if client is connected
+        net_tx.as_ref().map(|tx| {
+          // only send data if it's changed
+          if !gamepad_eq(&gamepad, &last_gamepad) {
+            tx.send(gamepad.clone())
+              .expect("Failed to send gamepad data");
+            last_gamepad = gamepad;
+          }
+        });
         ui_str.map(|s| ui_tx.send(s).expect("Failed to send UI data"));
       }),
     );
@@ -207,4 +214,14 @@ fn handle_mouse(n: f32, reverse: bool, mut cb: impl FnMut(i16)) {
   let mapped = (n * sensitivity).max(-32767.0).min(32767.0) as i16;
 
   cb(if reverse { -mapped } else { mapped });
+}
+
+fn gamepad_eq(a: &XGamepad, b: &XGamepad) -> bool {
+  a.buttons.raw == b.buttons.raw
+    && a.left_trigger == b.left_trigger
+    && a.right_trigger == b.right_trigger
+    && a.thumb_lx == b.thumb_lx
+    && a.thumb_ly == b.thumb_ly
+    && a.thumb_rx == b.thumb_rx
+    && a.thumb_ry == b.thumb_ry
 }
