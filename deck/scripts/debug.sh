@@ -1,2 +1,2 @@
 #!/bin/bash
-konsole -e "./stickdeck"
+konsole -e "/bin/bash -c './stickdeck || read -p \"Press enter to exit\"'"
