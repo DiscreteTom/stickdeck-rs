@@ -12,7 +12,10 @@ Turn your SteamDeck into a joystick for your PC, with trackpad and gyro support!
 
 > [!NOTE]
 > The Steam version and the GitHub version are totally the same,
-> but configuring via Steam is easier for most users.
+> but configuring via Steam is way more easier for most users.
+
+> [!IMPORTANT]
+> The server side will be treated as a game on SteamDeck, so you can't play Steam games on PC while the server side is running on SteamDeck **_with the same Steam account_**. You can still play non-Steam games on PC, or you can register a new Steam account for the server side.
 
 #### Install from Steam
 
