@@ -22,6 +22,8 @@ jobs:
           cp deck/target/release/stickdeck dist/
           chmod +x deck/scripts/setup.sh
           cp deck/scripts/setup.sh dist/
+          chmod +x deck/scripts/launch.sh
+          cp deck/scripts/launch.sh dist/
           chmod +x deck/scripts/debug.sh
           cp deck/scripts/debug.sh dist/
           cp deck/stickdeck.vdf dist/
