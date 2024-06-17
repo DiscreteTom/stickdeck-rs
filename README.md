@@ -24,19 +24,17 @@ TODO
 #### Install from GitHub
 
 1. **_Switch to Desktop Mode on SteamDeck. All the following steps are done on SteamDeck in the desktop mode._**
-2. Open a terminal (e.g. System > Konsole), run `passwd` to setup a password for the user `deck`.
-   1. You can use `Steam + X` to show the on-screen keyboard.
-3. Download `stickdeck-vX.X.X.zip` from the [latest release](https://github.com/DiscreteTom/stickdeck-rs/releases/latest) and extract it.
-4. Run `setup.sh` in the extracted folder. It will ask you to input your password you just set.
-5. Run `stickdeck` on SteamDeck, this should open a new window, but your input is not captured now. Close the window.
-6. Start `Steam` client (NOT `Returning to Gaming Mode`) in the Desktop Mode. In your library, you should find a game called `Spacewar`. [Edit its input mapping](https://partner.steamgames.com/doc/features/steam_controller/getting_started_for_devs#14). You should have a layout called `stickdeck`, edit it so that all the inputs are mapped to the correct game actions.
+2. Download `stickdeck-vX.X.X.zip` from the [latest release](https://github.com/DiscreteTom/stickdeck-rs/releases/latest) and extract it.
+3. Run `setup.sh` in the extracted folder.
+4. Run `launch.sh` on SteamDeck, this should open a new window, but your input is not captured now. Close the window by tapping the `Exit` button.
+5. Start `Steam` client (NOT `Returning to Gaming Mode`) in the Desktop Mode. In your library, you should find a game called `Spacewar`. [Edit its input mapping](https://partner.steamgames.com/doc/features/steam_controller/getting_started_for_devs#14) so that all the inputs are mapped to the correct game actions.
    1. For joysticks, use `Left/Right Stick (as Joystick Move)`.
    2. For trackpad and gyro, use `Left/Right Stick (as Absolute Mouse)`.
-7. Run `stickdeck` again, click `Start Server`, now you should see the input when you press buttons or move joysticks on SteamDeck.
+6. Run `launch.sh` again, click `Start Server`, now you should see the input when you press buttons or move joysticks on SteamDeck.
 
 Now the setup is done, you can proceed to the client side.
 
-Next time you want to use Stickdeck, you only need to run `stickdeck` and click `Start Server`.
+Next time you want to use Stickdeck, you only need to run `launch.sh` and click `Start Server`.
 
 ### Client Side (PC)
 
