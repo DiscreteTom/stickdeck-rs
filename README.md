@@ -1,4 +1,4 @@
-# Stickdeck
+# StickDeck
 
 [![version](https://img.shields.io/github/v/tag/DiscreteTom/stickdeck-rs?label=release&style=flat-square)](https://github.com/DiscreteTom/stickdeck-rs/releases/latest)
 ![license](https://img.shields.io/github/license/DiscreteTom/stickdeck-rs?style=flat-square)
@@ -34,7 +34,7 @@ TODO
 
 Now the setup is done, you can proceed to the client side.
 
-Next time you want to use Stickdeck, you only need to run `launch.sh` and click `Start Server`.
+Next time you want to use StickDeck, you only need to run `launch.sh` and click `Start Server`.
 
 ### Client Side (PC)
 
@@ -42,14 +42,14 @@ Next time you want to use Stickdeck, you only need to run `launch.sh` and click 
 2. Download `stickdeck-win-vX.X.X.zip` from the [latest release](https://github.com/DiscreteTom/stickdeck-rs/releases/latest) and extract it.
 3. Make sure your SteamDeck and your PC are in the same network.
 4. Make sure your SteamDeck is running the server.
-5. Run `stickdeck-win.exe`. Once your see `Virtual controller is ready` in the console, Stickdeck is ready.
+5. Run `stickdeck-win.exe`. Once your see `Virtual controller is ready` in the console, StickDeck is ready.
 6. (Optional) If you want to test the controller, run `joy.cpl`.
 
-Next time you want to use Stickdeck, you only need to run `stickdeck-win.exe` (of course you should start the server first).
+Next time you want to use StickDeck, you only need to run `stickdeck-win.exe` (of course you should start the server first).
 
 > [!NOTE]
 > By default the client will try to connect `steamdeck:7777`. If you want to connect to a different server, you can run `stickdeck-win.exe [server-ip]`.
-> You can find the server IP on the first line of the stickdeck UI window while the server is started.
+> You can find the server IP on the first line of the StickDeck UI window while the server is started.
 
 ## Credit
 
