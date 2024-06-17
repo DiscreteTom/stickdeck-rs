@@ -4,7 +4,7 @@ if "%1" == "" goto error
 
 cargo build --release
 del stickdeck-win-%1.zip || echo.
-PowerShell.exe -NoProfile -Command "Compress-Archive -Path 'target\release\stickdeck-win.exe' -DestinationPath 'stickdeck-win-%1.zip'"
+PowerShell.exe -NoProfile -Command "Compress-Archive -Path 'target\release\stickdeck-win.exe', 'scripts\debug.bat' -DestinationPath 'stickdeck-win-%1.zip'"
 gh release delete-asset %1 stickdeck-win-%1.zip -y || echo.
 gh release upload %1 stickdeck-win-%1.zip
 goto end
