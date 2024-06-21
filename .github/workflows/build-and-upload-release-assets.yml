@@ -28,6 +28,7 @@ jobs:
           cp deck/scripts/debug.sh dist/
           cp deck/stickdeck.vdf dist/
           cp deck/steamworks_sdk_154/libsteam_api.so dist/
+          echo 480 > dist/steam_appid.txt
           zip -j stickdeck-${{ inputs.version }}.zip dist/*
 
       # delete the asset if it already exists
