@@ -15,8 +15,8 @@ pub struct InputConfig {
   pub connected_rx: mpsc::Receiver<mpsc::Sender<XGamepad>>,
 }
 
-pub fn spawn(app_id: u32, input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> {
-  let (client, single) = Client::init_app(app_id)?;
+pub fn spawn(input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> {
+  let (client, single) = Client::init()?;
 
   thread::spawn(move || {
     let input = client.input();
