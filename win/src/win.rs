@@ -4,6 +4,9 @@ use std::{env, sync::mpsc};
 use vigem_client::{Client, TargetId, Xbox360Wired};
 
 fn main() {
+  println!("stickdeck-win v{}", env!("CARGO_PKG_VERSION"));
+  println!("See https://github.com/DiscreteTom/stickdeck-rs for more info.");
+
   let (gamepad_tx, gamepad_rx) = mpsc::channel();
 
   // connect to the server
