@@ -120,11 +120,12 @@ impl Application for App {
         .on_press(Message::Exit)
         .width(Length::Fill),
         text(&format!(
-          "=== Server is listening at {}:{} ===",
-          self.local_ip, self.port
+          "=== [stickdeck v{}] Server is listening at {}:{} ===",
+          env!("CARGO_PKG_VERSION"),
+          self.local_ip,
+          self.port
         ))
         .size(5),
-        text(&format!("stickdeck v{}", env!("CARGO_PKG_VERSION"))).size(5),
         text(&self.content).size(4)
       ]
       .padding([4, 20])
