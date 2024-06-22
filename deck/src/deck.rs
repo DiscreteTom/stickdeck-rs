@@ -106,6 +106,7 @@ impl Application for App {
         )
         .on_press(Message::StartServer)
         .width(Length::Fill),
+        text(&format!("stickdeck v{}", env!("CARGO_PKG_VERSION"))).size(5)
       ]
       .padding([4, 20])
       .into(),
@@ -123,6 +124,7 @@ impl Application for App {
           self.local_ip, self.port
         ))
         .size(5),
+        text(&format!("stickdeck v{}", env!("CARGO_PKG_VERSION"))).size(5),
         text(&self.content).size(4)
       ]
       .padding([4, 20])
