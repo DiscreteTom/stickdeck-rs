@@ -65,7 +65,7 @@ impl Application for App {
         state: State::Home,
         content: "".into(),
         ui_update_interval_ms: 30,
-        input_update_interval_ms: 10,
+        input_update_interval_ms: 3,
       },
       window::maximize(true),
     )
