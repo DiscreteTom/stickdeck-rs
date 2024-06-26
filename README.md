@@ -55,6 +55,7 @@ Next time you want to use StickDeck, you only need to run `stickdeck-win.exe` (o
 
 - Poll/update rate?
   - Depends on the configurable input update interval. In my case, set the input update interval to 3ms to reach the max update rate of 251Hz.
+  - Besides, the server side will only send the input when there is a change, so the actual update rate will be lower than the configured rate.
 
 ## Credit
 
