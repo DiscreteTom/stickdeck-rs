@@ -1,8 +1,10 @@
+mod config;
 mod gamepad;
 mod input;
 mod server;
 mod utils;
 
+use config::Config;
 use iced::{
   alignment::Horizontal,
   executor, time,
@@ -17,11 +19,16 @@ fn main() {
   let (input_config_tx, input_config_rx) = mpsc::channel();
   input::spawn(input_config_rx).expect("Failed to spawn the input thread");
 
-  App::run(Settings::with_flags(Flags { input_config_tx })).expect("Failed to run the app");
+  App::run(Settings::with_flags(Flags {
+    input_config_tx,
+    config: Config::init(),
+  }))
+  .expect("Failed to run the app");
 }
 
 struct Flags {
   input_config_tx: mpsc::Sender<InputConfig>,
+  config: Config,
 }
 
 enum State {
@@ -59,13 +66,13 @@ impl Application for App {
   fn new(flags: Self::Flags) -> (App, Command<Self::Message>) {
     (
       App {
-        flags,
         local_ip: local_ip().expect("Failed to get local ip address"),
         port: 7777,
         state: State::Home,
         content: "".into(),
         ui_update_interval_ms: 30,
-        input_update_interval_ms: 3,
+        input_update_interval_ms: flags.config.input_update_interval_ms,
+        flags,
       },
       window::maximize(true),
     )
@@ -141,6 +148,8 @@ impl Application for App {
     match message {
       Message::SetInputUpdateInterval(interval) => {
         self.input_update_interval_ms = interval;
+        self.flags.config.input_update_interval_ms = interval;
+        self.flags.config.save();
       }
       Message::StartServer => {
         let (update_tx, update_rx) = mpsc::channel();
