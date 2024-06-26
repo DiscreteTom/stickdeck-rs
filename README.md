@@ -51,6 +51,11 @@ Next time you want to use StickDeck, you only need to run `stickdeck-win.exe` (o
 > By default the client will try to connect `steamdeck:7777`. If you want to connect to a different server, you can run `stickdeck-win.exe [server-ip]`.
 > You can find the server IP on the first line of the StickDeck UI window while the server is started.
 
+## FAQ
+
+- Poll/update rate?
+  - Depends on the configurable input update interval. In my case, set the input update interval to 3ms to reach the max update rate of 251Hz.
+
 ## Credit
 
 - [ViGEm Bus Driver](https://github.com/nefarius/ViGEmBus)
