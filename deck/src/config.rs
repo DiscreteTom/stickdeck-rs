@@ -4,12 +4,15 @@ use std::fs;
 #[derive(Serialize, Deserialize)]
 pub struct Config {
   #[serde(default)]
+  pub dark: bool,
+  #[serde(default)]
   pub input_update_interval_ms: u64,
 }
 
 impl Default for Config {
   fn default() -> Self {
     Self {
+      dark: true,
       input_update_interval_ms: 3,
     }
   }

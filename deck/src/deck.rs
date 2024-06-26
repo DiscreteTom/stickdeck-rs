@@ -8,7 +8,7 @@ use config::Config;
 use iced::{
   alignment::Horizontal,
   executor, time,
-  widget::{button, column, slider, text},
+  widget::{button, column, slider, text, toggler},
   window, Application, Command, Element, Length, Settings, Theme,
 };
 use input::InputConfig;
@@ -41,6 +41,7 @@ enum State {
 
 #[derive(Debug, Clone)]
 enum Message {
+  SetDarkMode(bool),
   SetInputUpdateInterval(u64),
   StartServer,
   Update,
@@ -82,6 +83,14 @@ impl Application for App {
     "Stickdeck".into()
   }
 
+  fn theme(&self) -> Self::Theme {
+    if self.flags.config.dark {
+      Theme::Dark
+    } else {
+      Theme::Light
+    }
+  }
+
   fn view(&self) -> Element<Message> {
     match self.state {
       State::Home => column![
@@ -103,6 +112,11 @@ impl Application for App {
             Message::SetInputUpdateInterval(v as u64)
           })
           .step(1.0),
+          toggler(Some("Dark Mode".into()), self.flags.config.dark, |v| {
+            Message::SetDarkMode(v)
+          })
+          .size(10)
+          .text_size(10)
         ]
         .padding([4, 0]),
         button(
@@ -146,6 +160,10 @@ impl Application for App {
 
   fn update(&mut self, message: Self::Message) -> Command<Self::Message> {
     match message {
+      Message::SetDarkMode(dark) => {
+        self.flags.config.dark = dark;
+        self.flags.config.save();
+      }
       Message::SetInputUpdateInterval(interval) => {
         self.input_update_interval_ms = interval;
         self.flags.config.input_update_interval_ms = interval;
