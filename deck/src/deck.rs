@@ -55,7 +55,6 @@ struct App {
   state: State,
   content: String,
   ui_update_interval_ms: u64,
-  input_update_interval_ms: u64,
 }
 
 impl Application for App {
@@ -72,7 +71,6 @@ impl Application for App {
         state: State::Home,
         content: "".into(),
         ui_update_interval_ms: 30,
-        input_update_interval_ms: flags.config.input_update_interval_ms,
         flags,
       },
       window::maximize(true),
@@ -105,12 +103,14 @@ impl Application for App {
         column![
           text(&format!(
             "Input Update Interval: {}ms",
-            self.input_update_interval_ms
+            self.flags.config.input_update_interval_ms
           ))
           .size(5),
-          slider(1.0..=50.0, self.input_update_interval_ms as f64, |v| {
-            Message::SetInputUpdateInterval(v as u64)
-          })
+          slider(
+            1.0..=50.0,
+            self.flags.config.input_update_interval_ms as f64,
+            |v| { Message::SetInputUpdateInterval(v as u64) }
+          )
           .step(1.0),
           toggler(Some("Dark Mode".into()), self.flags.config.dark, |v| {
             Message::SetDarkMode(v)
@@ -165,7 +165,6 @@ impl Application for App {
         self.flags.config.save();
       }
       Message::SetInputUpdateInterval(interval) => {
-        self.input_update_interval_ms = interval;
         self.flags.config.input_update_interval_ms = interval;
         self.flags.config.save();
       }
@@ -180,7 +179,7 @@ impl Application for App {
           .flags
           .input_config_tx
           .send(InputConfig {
-            interval_ms: self.input_update_interval_ms,
+            interval_ms: self.flags.config.input_update_interval_ms,
             update_rx,
             ui_tx,
             connected_rx,
