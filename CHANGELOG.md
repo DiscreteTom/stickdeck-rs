@@ -3,7 +3,7 @@
 ## v0.1.1
 
 - Client (PC)
-  - Note: apply `env_logger`, add debug log.
+  - Note: apply `env_logger`, add debug and trace log.
 - Server (SteamDeck)
   - Feat: save config to file. [#2](https://github.com/DiscreteTom/stickdeck-rs/issues/2)
   - Feat: add dark mode. [#1](https://github.com/DiscreteTom/stickdeck-rs/issues/1)

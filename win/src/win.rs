@@ -1,6 +1,6 @@
 mod client;
 
-use log::{debug, info, log_enabled, Level};
+use log::{debug, info, log_enabled, trace, Level};
 use std::{env, sync::mpsc, time::Instant};
 use vigem_client::{Client, TargetId, Xbox360Wired};
 
@@ -41,7 +41,7 @@ fn main() {
   let mut now = Instant::now();
   let mut count = 0;
   while let Ok(data) = gamepad_rx.recv() {
-    // println!("{:?}", data);
+    trace!("{:?}", data);
 
     xbox
       .update(&data)
