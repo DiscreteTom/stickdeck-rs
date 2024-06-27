@@ -41,7 +41,7 @@ fn main() {
   let mut now = Instant::now();
   let mut count = 0;
   while let Ok(data) = gamepad_rx.recv() {
-    trace!("{:?}", data);
+    trace!("Got {:?}", data);
 
     xbox
       .update(&data)
