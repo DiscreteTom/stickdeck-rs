@@ -94,7 +94,7 @@ impl Application for App {
       State::Home => column![
         button(
           text("Exit")
-            .size(5)
+            .size(30)
             .horizontal_alignment(Horizontal::Center)
             .width(Length::Fill)
         )
@@ -105,36 +105,37 @@ impl Application for App {
             "Input Update Interval: {}ms",
             self.flags.config.input_update_interval_ms
           ))
-          .size(5),
+          .size(20),
           slider(
             1.0..=50.0,
             self.flags.config.input_update_interval_ms as f64,
             |v| { Message::SetInputUpdateInterval(v as u64) }
           )
+          .height(40)
           .step(1.0),
           toggler(Some("Dark Mode".into()), self.flags.config.dark, |v| {
             Message::SetDarkMode(v)
           })
-          .size(10)
-          .text_size(10)
+          .size(40)
+          .text_size(40)
         ]
-        .padding([4, 0]),
+        .padding([16, 0]),
         button(
           text("Start Server")
-            .size(5)
+            .size(30)
             .horizontal_alignment(Horizontal::Center)
             .width(Length::Fill)
         )
         .on_press(Message::StartServer)
         .width(Length::Fill),
-        text(&format!("stickdeck v{}", env!("CARGO_PKG_VERSION"))).size(5)
+        text(&format!("stickdeck v{}", env!("CARGO_PKG_VERSION"))).size(20)
       ]
-      .padding([4, 20])
+      .padding([16, 80])
       .into(),
       State::Started { .. } => column![
         button(
           text("Exit")
-            .size(5)
+            .size(30)
             .horizontal_alignment(Horizontal::Center)
             .width(Length::Fill)
         )
@@ -146,10 +147,10 @@ impl Application for App {
           self.local_ip,
           self.port
         ))
-        .size(5),
-        text(&self.content).size(4)
+        .size(20),
+        text(&self.content).size(16)
       ]
-      .padding([4, 20])
+      .padding([16, 80])
       .into(),
     }
   }
