@@ -5,6 +5,9 @@ use std::{env, sync::mpsc};
 use vigem_client::{Client, TargetId, Xbox360Wired};
 
 fn main() {
+  if env::var("RUST_LOG").is_err() {
+    env::set_var("RUST_LOG", "info")
+  }
   env_logger::init();
 
   info!("stickdeck-win v{}", env!("CARGO_PKG_VERSION"));
