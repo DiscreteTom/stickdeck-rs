@@ -13,9 +13,14 @@ use iced::{
 };
 use input::InputConfig;
 use local_ip_address::local_ip;
-use std::{net::IpAddr, sync::mpsc, time::Duration};
+use std::{env, net::IpAddr, sync::mpsc, time::Duration};
 
 fn main() {
+  if env::var("RUST_LOG").is_err() {
+    env::set_var("RUST_LOG", "info")
+  }
+  env_logger::init();
+
   let (input_config_tx, input_config_rx) = mpsc::channel();
   input::spawn(input_config_rx).expect("Failed to spawn the input thread");
 

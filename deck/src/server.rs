@@ -1,10 +1,11 @@
 use crate::gamepad::XGamepad;
+use log::info;
 use std::{io::Write, net::TcpListener, sync::mpsc, thread};
 
 pub fn spawn(addr: &str, connected_tx: mpsc::Sender<mpsc::Sender<XGamepad>>) {
   let listener = TcpListener::bind(addr).expect(&format!("Failed to bind to address {}", addr));
 
-  println!("Server listening on {}", addr);
+  info!("Server listening on {}", addr);
 
   thread::spawn(move || {
     // only accept one client because we will consume the receiver
@@ -14,7 +15,7 @@ pub fn spawn(addr: &str, connected_tx: mpsc::Sender<mpsc::Sender<XGamepad>>) {
       .unwrap()
       .expect("Failed to accept connection");
     stream.set_nodelay(true).expect("Failed to set nodelay");
-    println!("New client connected");
+    info!("New client connected");
 
     let (data_tx, data_rx) = mpsc::channel();
 
@@ -32,7 +33,7 @@ pub fn spawn(addr: &str, connected_tx: mpsc::Sender<mpsc::Sender<XGamepad>>) {
       }
     }
 
-    println!("Client disconnected");
+    info!("Client disconnected");
   });
 }
 

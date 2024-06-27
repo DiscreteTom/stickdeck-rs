@@ -3,6 +3,7 @@ mod xbox;
 
 use crate::gamepad::{XButtons, XGamepad};
 use action::{InputAction, InputActionData, InputDigitalAction, UpdatableInputAction};
+use log::info;
 use std::{sync::mpsc, thread, time::Duration};
 use steamworks::{Client, ClientManager, Input, SResult, SingleClient};
 use steamworks_sys::InputHandle_t;
@@ -24,7 +25,7 @@ pub fn spawn(input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> {
 
     // try to init controls from vdf
     let xbox = poll(&single, 100, retry(10, || XBoxControls::new(&input).ok()));
-    println!("XBox controls initialized");
+    info!("XBox controls initialized");
 
     // try to get input handles (input devices)
     let input_handles = poll(
@@ -33,10 +34,10 @@ pub fn spawn(input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> {
       retry(10, || {
         let handles = input.get_connected_controllers();
         if !handles.is_empty() {
-          println!("num of input handles: {:?}", handles.len());
+          info!("num of input handles: {:?}", handles.len());
           return Some(handles);
         }
-        println!("no input handles, retrying...");
+        info!("no input handles, retrying...");
         return None;
       }),
     );
@@ -109,8 +110,8 @@ pub fn spawn(input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> {
           handle_mouse(data.y, true, |y| gamepad.thumb_ry = y);
         });
 
-        // println!("{:?}", std::time::SystemTime::now());
-        // println!("{:?}", gamepad);
+        // info!("{:?}", std::time::SystemTime::now());
+        // info!("{:?}", gamepad);
 
         // only send data if client is connected
         net_tx.as_ref().map(|tx| {
