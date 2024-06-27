@@ -1,7 +1,7 @@
 mod client;
 
-use log::info;
-use std::{env, sync::mpsc};
+use log::{debug, info, log_enabled, Level};
+use std::{env, sync::mpsc, time::Instant};
 use vigem_client::{Client, TargetId, Xbox360Wired};
 
 fn main() {
@@ -38,12 +38,23 @@ fn main() {
     .expect("Failed to wait for the virtual controller to be ready");
   info!("Virtual controller is ready");
 
+  let mut now = Instant::now();
+  let mut count = 0;
   while let Ok(data) = gamepad_rx.recv() {
     // println!("{:?}", data);
 
     xbox
       .update(&data)
       .expect("Failed to update the virtual controller");
+
+    if log_enabled!(Level::Debug) {
+      count += 1;
+      if now.elapsed().as_secs() >= 1 {
+        debug!("{} updates per second", count);
+        now = Instant::now();
+        count = 0;
+      }
+    }
   }
 
   info!("Shutting down...");
