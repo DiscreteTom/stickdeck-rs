@@ -1,10 +1,11 @@
+use log::info;
 use std::{io::Read, net::TcpStream, sync::mpsc, thread};
 use vigem_client::{XButtons, XGamepad};
 
 pub fn spawn(server: &str, tx: mpsc::Sender<XGamepad>) {
-  println!("Connecting to the server...");
+  info!("Connecting to the server...");
   let mut stream = TcpStream::connect(server).expect("Failed to connect to the server");
-  println!("Connected");
+  info!("Connected");
 
   thread::spawn(move || {
     let mut buf = [0; 12];
@@ -17,7 +18,7 @@ pub fn spawn(server: &str, tx: mpsc::Sender<XGamepad>) {
         .expect("Failed to send data to the main thread");
     }
 
-    println!("Disconnected");
+    info!("Disconnected");
   });
 }
 

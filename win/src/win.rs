@@ -1,11 +1,14 @@
 mod client;
 
+use log::info;
 use std::{env, sync::mpsc};
 use vigem_client::{Client, TargetId, Xbox360Wired};
 
 fn main() {
-  println!("stickdeck-win v{}", env!("CARGO_PKG_VERSION"));
-  println!("See https://github.com/DiscreteTom/stickdeck-rs for more info.");
+  env_logger::init();
+
+  info!("stickdeck-win v{}", env!("CARGO_PKG_VERSION"));
+  info!("See https://github.com/DiscreteTom/stickdeck-rs for more info.");
 
   let (gamepad_tx, gamepad_rx) = mpsc::channel();
 
@@ -30,7 +33,7 @@ fn main() {
   xbox
     .wait_ready()
     .expect("Failed to wait for the virtual controller to be ready");
-  println!("Virtual controller is ready");
+  info!("Virtual controller is ready");
 
   while let Ok(data) = gamepad_rx.recv() {
     // println!("{:?}", data);
@@ -40,5 +43,5 @@ fn main() {
       .expect("Failed to update the virtual controller");
   }
 
-  println!("Shutting down...");
+  info!("Shutting down...");
 }
