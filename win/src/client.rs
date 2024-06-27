@@ -11,9 +11,6 @@ pub fn spawn(server: &str, tx: mpsc::Sender<XGamepad>) {
     let mut buf = [0; 12];
 
     while let Ok(_) = stream.read_exact(&mut buf) {
-      // println!("{:?}", std::time::SystemTime::now());
-      // println!("{:?}", buf);
-
       tx.send(deserialize(&buf))
         .expect("Failed to send data to the main thread");
     }
