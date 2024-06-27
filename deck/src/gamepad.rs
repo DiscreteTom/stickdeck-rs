@@ -1,6 +1,6 @@
 // copied from https://github.com/CasualX/vigem-client/blob/acbc38bbc159e315622b5dbd9b41048fc9f3164c/src/x360.rs
 
-#[derive(Default, Clone)]
+#[derive(Default, Clone, Debug)]
 pub struct XButtons {
   pub raw: u16,
 }
@@ -39,7 +39,7 @@ impl XButtons {
   pub const Y: u16 = 0x8000;
 }
 
-#[derive(Default, Clone)]
+#[derive(Default, Clone, Debug)]
 pub struct XGamepad {
   pub buttons: XButtons,
   pub left_trigger: u8,

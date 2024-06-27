@@ -8,7 +8,7 @@
   - Feat: save config to file. [#2](https://github.com/DiscreteTom/stickdeck-rs/issues/2)
   - Feat: add dark mode. [#1](https://github.com/DiscreteTom/stickdeck-rs/issues/1)
   - Note: change default input update interval to 3ms to reach the max update rate (250+ updates per second).
-  - Note: apply `env_logger`.
+  - Note: apply `env_logger`, add trace log.
   - Fix: fix scaling in gaming mode. [#3](https://github.com/DiscreteTom/stickdeck-rs/issues/3)
 
 ## v0.1.0

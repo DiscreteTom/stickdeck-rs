@@ -3,7 +3,7 @@ mod xbox;
 
 use crate::gamepad::{XButtons, XGamepad};
 use action::{InputAction, InputActionData, InputDigitalAction, UpdatableInputAction};
-use log::info;
+use log::{info, trace};
 use std::{sync::mpsc, thread, time::Duration};
 use steamworks::{Client, ClientManager, Input, SResult, SingleClient};
 use steamworks_sys::InputHandle_t;
@@ -110,13 +110,12 @@ pub fn spawn(input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> {
           handle_mouse(data.y, true, |y| gamepad.thumb_ry = y);
         });
 
-        // info!("{:?}", std::time::SystemTime::now());
-        // info!("{:?}", gamepad);
-
         // only send data if client is connected
         net_tx.as_ref().map(|tx| {
           // only send data if it's changed
           if !gamepad_eq(&gamepad, &last_gamepad) {
+            trace!("Send {:?}", gamepad);
+
             tx.send(gamepad.clone())
               .expect("Failed to send gamepad data");
             last_gamepad = gamepad;
