@@ -1,0 +1,34 @@
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version of the release, should match an existing tag name. E.g. v0.1.0"
+        required: true
+
+jobs:
+  stickdeck-win:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+
+      # run tests
+      - run: cd win && cargo test
+
+      # build the binary
+      - run: cd win && cargo build --release
+
+      # zip files
+      - run: PowerShell.exe -NoProfile -Command "Compress-Archive -Path 'win\target\release\stickdeck-win.exe', 'win\scripts\debug.bat' -DestinationPath 'stickdeck-win-${{ inputs.version }}.zip'"
+
+      # delete the asset if it already exists
+      - run: gh release delete-asset ${{ inputs.version }} stickdeck-win-${{ inputs.version }}.zip -y
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # upload the asset
+      - run: gh release upload ${{ inputs.version }} stickdeck-win-${{ inputs.version }}.zip
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -2,6 +2,8 @@
 
 ## v0.1.2
 
+- Client (PC)
+  - Note: auto build the client side with GitHub Actions.
 - Server (Steam Deck)
   - Fix: add `absolute_mouse` value to `joystick_move` value, instead of override it.
 - Note: add unit tests.
