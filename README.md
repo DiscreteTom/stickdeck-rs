@@ -30,7 +30,7 @@ TODO
 5. Start `Steam` client (NOT `Returning to Gaming Mode`) in the Desktop Mode. In your library, you should find a game called `Spacewar`. [Edit its input mapping](https://partner.steamgames.com/doc/features/steam_controller/getting_started_for_devs#14) so that all the inputs are mapped to the correct game actions.
    1. For joysticks, use `Left/Right Stick (as Joystick Move)`.
    2. For trackpad and gyro, use `Left/Right Stick (as Absolute Mouse)`.
-6. Run `launch.sh` again, click `Start Server`, now you should see the input when you press buttons or move joysticks on SteamDeck.
+6. Run `launch.sh` again, click `Start Server`, now you should see the input when you press buttons or move joysticks on Steam Deck.
 
 Now the setup is done, you can proceed to the client side.
 
