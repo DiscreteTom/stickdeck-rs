@@ -47,8 +47,9 @@ Now you can proceed to the [client side setup](#client-side-pc).
 
 1. Start the server on Steam Deck. Make sure the server is running and the input is captured.
 2. Make sure your PC and your Steam Deck are in the same network.
-3. Run `stickdeck-win.exe` on your PC. Once you see `Virtual controller is ready` in the console, StickDeck is ready.
-4. (Optional) If you want to test the controller, run `joy.cpl`.
+3. Make sure the client on your PC is under the same minor version as the server on Steam Deck.
+4. Run `stickdeck-win.exe` on your PC. Once you see `Virtual controller is ready` in the console, StickDeck is ready.
+5. (Optional) If you want to test the controller, run `joy.cpl`.
 
 > [!NOTE]
 > By default the client will try to connect `steamdeck:7777`. If you want to connect to a different server, you can run `stickdeck-win.exe [server-ip]`.
