@@ -236,3 +236,62 @@ impl SafeAdd for i16 {
     *self = self.saturating_add(other)
   }
 }
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+
+  #[test]
+  fn test_gamepad_eq() {
+    let a = XGamepad::default();
+    let b = XGamepad::default();
+    assert!(gamepad_eq(&a, &b));
+
+    let mut a = XGamepad::default();
+    a.buttons.raw |= XButtons::UP;
+    assert!(!gamepad_eq(&a, &b));
+
+    let mut a = XGamepad::default();
+    a.left_trigger = 255;
+    assert!(!gamepad_eq(&a, &b));
+
+    let mut a = XGamepad::default();
+    a.right_trigger = 255;
+    assert!(!gamepad_eq(&a, &b));
+
+    let mut a = XGamepad::default();
+    a.thumb_lx = 32767;
+    assert!(!gamepad_eq(&a, &b));
+
+    let mut a = XGamepad::default();
+    a.thumb_ly = 32767;
+    assert!(!gamepad_eq(&a, &b));
+
+    let mut a = XGamepad::default();
+    a.thumb_rx = 32767;
+    assert!(!gamepad_eq(&a, &b));
+
+    let mut a = XGamepad::default();
+    a.thumb_ry = 32767;
+    assert!(!gamepad_eq(&a, &b));
+  }
+
+  #[test]
+  fn test_safe_add() {
+    let mut a = 32767;
+    a.safe_add(1);
+    assert_eq!(a, 32767);
+
+    let mut a = -32768;
+    a.safe_add(-1);
+    assert_eq!(a, -32768);
+
+    let mut a = 0;
+    a.safe_add(1);
+    assert_eq!(a, 1);
+
+    let mut a = 0;
+    a.safe_add(-1);
+    assert_eq!(a, -1);
+  }
+}
