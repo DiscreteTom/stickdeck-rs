@@ -12,14 +12,17 @@ Turn your Steam Deck into a joystick for your PC, with trackpad and gyro support
 
 > [!NOTE]
 > The Steam version and the GitHub version are totally the same,
-> but configuring via Steam is way more easier for most users.
+> but setup via Steam is way more easier for most users,
+> and you can also get automatic updates.
 
 > [!IMPORTANT]
-> The server side will be treated as a game on Steam Deck, so you can't play Steam games on PC while the server side is running on Steam Deck **_with the same Steam account_**. You can still play non-Steam games on PC, or you can register a new Steam account for the server side.
+> The server side will be treated as a game on Steam Deck, so you can't play Steam games on PC while the server side is running on Steam Deck <ins>**_with the same Steam account_**</ins>. You can still play non-Steam games on PC, or you can register a new Steam account for the server side.
 
 #### Install from Steam
 
-TODO
+Just acquire the StickDeck from Steam and download it to your Steam Deck, then no further setup is needed.
+
+Now you can proceed to the [client side setup](#client-side-pc).
 
 #### Install from GitHub
 
@@ -31,23 +34,21 @@ TODO
    1. For joysticks, use `Left/Right Stick (as Joystick Move)`.
    2. For trackpad and gyro, use `Left/Right Stick (as Absolute Mouse)`.
 6. Run `launch.sh` again, click `Start Server`, now you should see the input when you press buttons or move joysticks on Steam Deck.
-
-Now the setup is done, you can proceed to the client side.
+7. Now you can exit by tapping the `Exit` button. Next time you want to start the server, just run `launch.sh` and click `Start Server`.
 
 > You can also add `launch.sh` as a non-Steam game on Steam Deck, so you can start the server directly from Steam Deck's Gaming Mode.
-
-Next time you want to use StickDeck, you only need to run `launch.sh` and click `Start Server`.
 
 ### Client Side (PC)
 
 1. Install [ViGEm Bus Driver](https://github.com/nefarius/ViGEmBus) and **_restart_** your PC.
 2. Download `stickdeck-win-vX.X.X.zip` from the [latest release](https://github.com/DiscreteTom/stickdeck-rs/releases/latest) and extract it.
-3. Make sure your Steam Deck and your PC are in the same network.
-4. Make sure your Steam Deck is running the server.
-5. Run `stickdeck-win.exe`. Once your see `Virtual controller is ready` in the console, StickDeck is ready.
-6. (Optional) If you want to test the controller, run `joy.cpl`.
 
-Next time you want to use StickDeck, you only need to run `stickdeck-win.exe` (of course you should start the server first).
+## Usage
+
+1. Start the server on Steam Deck. Make sure the server is running and the input is captured.
+2. Make sure your PC and your Steam Deck are in the same network.
+3. Run `stickdeck-win.exe` on your PC. Once you see `Virtual controller is ready` in the console, StickDeck is ready.
+4. (Optional) If you want to test the controller, run `joy.cpl`.
 
 > [!NOTE]
 > By default the client will try to connect `steamdeck:7777`. If you want to connect to a different server, you can run `stickdeck-win.exe [server-ip]`.
