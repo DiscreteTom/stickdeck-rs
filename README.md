@@ -34,6 +34,8 @@ TODO
 
 Now the setup is done, you can proceed to the client side.
 
+> You can also add `launch.sh` as a non-Steam game on Steam Deck, so you can start the server directly from Steam Deck's Gaming Mode.
+
 Next time you want to use StickDeck, you only need to run `launch.sh` and click `Start Server`.
 
 ### Client Side (PC)
