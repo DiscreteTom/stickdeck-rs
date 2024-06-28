@@ -6,7 +6,7 @@ on:
         required: true
 
 jobs:
-  build-and-upload-release-assets:
+  stickdeck:
     runs-on: ubuntu-latest
 
     steps:
@@ -35,7 +35,8 @@ jobs:
           zip -j stickdeck-${{ inputs.version }}.zip dist/*
 
       # delete the asset if it already exists
-      - run: gh release delete-asset ${{ inputs.version }} stickdeck-${{ inputs.version }}.zip -y || true
+      - run: gh release delete-asset ${{ inputs.version }} stickdeck-${{ inputs.version }}.zip -y
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
