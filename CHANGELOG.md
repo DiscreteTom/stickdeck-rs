@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.1.2
+
+- Server (Steam Deck)
+  - Fix: add `absolute_mouse` value to `joystick_move` value, instead of override it.
+
 ## v0.1.1
 
 - Client (PC)

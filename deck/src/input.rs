@@ -98,16 +98,16 @@ pub fn spawn(input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> {
           gamepad.thumb_ly = f32_to_i16(data.y);
         });
         update_input(&xbox.l_mouse, &mut ctx, |data| {
-          handle_mouse(data.x, false, |x| gamepad.thumb_lx = x);
-          handle_mouse(data.y, true, |y| gamepad.thumb_ly = y);
+          handle_mouse(data.x, false, |x| gamepad.thumb_lx.safe_add(x));
+          handle_mouse(data.y, true, |y| gamepad.thumb_ly.safe_add(y));
         });
         update_input(&xbox.r_move, &mut ctx, |data| {
           gamepad.thumb_rx = f32_to_i16(data.x);
           gamepad.thumb_ry = f32_to_i16(data.y);
         });
         update_input(&xbox.r_mouse, &mut ctx, |data| {
-          handle_mouse(data.x, false, |x| gamepad.thumb_rx = x);
-          handle_mouse(data.y, true, |y| gamepad.thumb_ry = y);
+          handle_mouse(data.x, false, |x| gamepad.thumb_rx.safe_add(x));
+          handle_mouse(data.y, true, |y| gamepad.thumb_ry.safe_add(y));
         });
 
         // only send data if client is connected
@@ -202,7 +202,7 @@ fn f32_to_i16(f: f32) -> i16 {
 
 fn handle_mouse(n: f32, reverse: bool, mut cb: impl FnMut(i16)) {
   if n == 0.0 {
-    // if 0, don't override the stick value
+    // if 0, don't update the stick value
     return;
   }
 
@@ -225,4 +225,14 @@ fn gamepad_eq(a: &XGamepad, b: &XGamepad) -> bool {
     && a.thumb_ly == b.thumb_ly
     && a.thumb_rx == b.thumb_rx
     && a.thumb_ry == b.thumb_ry
+}
+
+trait SafeAdd {
+  fn safe_add(&mut self, other: Self);
+}
+
+impl SafeAdd for i16 {
+  fn safe_add(&mut self, other: Self) {
+    *self = self.saturating_add(other)
+  }
 }
