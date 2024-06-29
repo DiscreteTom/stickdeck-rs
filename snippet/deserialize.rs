@@ -1,5 +1,6 @@
 // since the `XGamePad` in the client side and the server side are two different struct,
-// we use `include!` to include this code snippet in both client and server side.
+// we use `include!` to include this code snippet in both client and server side
+// to keep the behaviour consistent.
 
 pub trait DeserializableGamepad {
   type Target;
