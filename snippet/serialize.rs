@@ -19,32 +19,3 @@ impl SerializableGamepad for XGamepad {
     buf[10..12].copy_from_slice(&self.thumb_ry.to_le_bytes());
   }
 }
-
-pub trait SerializablePacket {
-  /// Serialize the packet into a buffer.
-  fn serialize(&self, buf: &mut [u8; PACKET_FRAME_SIZE]);
-}
-
-impl<Gamepad: SerializableGamepad> SerializablePacket for Packet<Gamepad> {
-  fn serialize(&self, buf: &mut [u8; PACKET_FRAME_SIZE]) {
-    match self {
-      Packet::Timestamp(timestamp) => {
-        buf[0] = 0;
-        buf[1..9].copy_from_slice(&timestamp.to_le_bytes());
-      }
-      Packet::Gamepad(gamepad) => {
-        buf[0] = 1;
-        gamepad.serialize(&mut buf[1..]);
-      }
-      Packet::MouseMove(mouse) => {
-        buf[0] = 2;
-        mouse.serialize(&mut buf[1..]);
-      }
-      Packet::GamepadAndMouseMove(gamepad, mouse) => {
-        buf[0] = 3;
-        gamepad.serialize(&mut buf[1..]);
-        mouse.serialize(&mut buf[13..]);
-      }
-    }
-  }
-}
