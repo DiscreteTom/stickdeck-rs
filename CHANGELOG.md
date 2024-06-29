@@ -7,6 +7,7 @@
   - Feat: `absolute_mouse` actions will control the mouse cursor directly.
 - Server (Steam Deck)
   - Note: increase vertical padding to fit performance overlay level 2.
+  - Note: `debug.sh` now will set `RUST_LOG=debug`.
 
 ## v0.1.2
 
