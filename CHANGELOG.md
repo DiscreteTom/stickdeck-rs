@@ -1,7 +1,10 @@
 # CHANGELOG
 
-## Next
+## v0.2.0
 
+- **_Breaking Change_**: update network protocol.
+- Client (PC)
+  - Feat: `absolute_mouse` actions will control the mouse cursor directly.
 - Server (Steam Deck)
   - Note: increase vertical padding to fit performance overlay level 2.
 

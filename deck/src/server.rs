@@ -1,8 +1,14 @@
 use crate::gamepad::XGamepad;
 use log::info;
-use std::{io::Write, net::TcpListener, sync::mpsc, thread};
+use std::{
+  io::{self, Write},
+  net::{TcpListener, TcpStream},
+  sync::mpsc,
+  thread,
+};
+use stickdeck_common::{Packet, PACKET_FRAME_SIZE};
 
-pub fn spawn(addr: &str, connected_tx: mpsc::Sender<mpsc::Sender<XGamepad>>) {
+pub fn spawn(addr: &str, connected_tx: mpsc::Sender<mpsc::Sender<Packet<XGamepad>>>) {
   let listener = TcpListener::bind(addr).expect(&format!("Failed to bind to address {}", addr));
 
   info!("Server listening on {}", addr);
@@ -23,12 +29,11 @@ pub fn spawn(addr: &str, connected_tx: mpsc::Sender<mpsc::Sender<XGamepad>>) {
       .send(data_tx)
       .expect("Failed to send connected signal");
 
+    let mut buf = [0; PACKET_FRAME_SIZE];
+
     while let Ok(data) = data_rx.recv() {
-      if stream
-        .write_all(&serialize(&data))
-        .and_then(|_| stream.flush())
-        .is_err()
-      {
+      data.serialize(&mut buf);
+      if write_stream(&mut stream, &buf).is_err() {
         break;
       }
     }
@@ -37,12 +42,19 @@ pub fn spawn(addr: &str, connected_tx: mpsc::Sender<mpsc::Sender<XGamepad>>) {
   });
 }
 
+fn write_stream(stream: &mut TcpStream, buf: &[u8; PACKET_FRAME_SIZE]) -> io::Result<()> {
+  stream.write_all(buf)?;
+  stream.flush()?;
+  Ok(())
+}
+
 include!("serialize.rs");
 
 #[cfg(test)]
 mod tests {
   use super::*;
   use crate::gamepad::XButtons;
+  use stickdeck_common::MouseMove;
 
   include!("../../win/src/deserialize.rs");
   include!("../../snippet/test_serialize_deserialize.rs");

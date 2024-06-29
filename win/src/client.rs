@@ -1,18 +1,25 @@
-use log::info;
+use log::{info, warn};
 use std::{io::Read, net::TcpStream, sync::mpsc, thread};
+use stickdeck_common::{MouseMove, Packet, PACKET_FRAME_SIZE};
 use vigem_client::{XButtons, XGamepad};
 
-pub fn spawn(server: &str, tx: mpsc::Sender<XGamepad>) {
+pub fn spawn(server: &str, tx: mpsc::Sender<Packet<XGamepad>>) {
   info!("Connecting to the server...");
   let mut stream = TcpStream::connect(server).expect("Failed to connect to the server");
   info!("Connected");
 
   thread::spawn(move || {
-    let mut buf = [0; 12];
-
+    let mut buf = [0; PACKET_FRAME_SIZE];
     while let Ok(_) = stream.read_exact(&mut buf) {
-      tx.send(deserialize(&buf))
-        .expect("Failed to send data to the main thread");
+      match Packet::deserialize(&buf) {
+        Ok(packet) => {
+          tx.send(packet)
+            .expect("Failed to send data to the main thread");
+        }
+        Err(_) => {
+          warn!("Invalid packet: {:?}", buf);
+        }
+      }
     }
 
     info!("Disconnected");

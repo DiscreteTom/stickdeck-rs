@@ -2690,7 +2690,12 @@ dependencies = [
  "serde_json",
  "steamworks",
  "steamworks-sys",
+ "stickdeck-common",
 ]
+
+[[package]]
+name = "stickdeck-common"
+version = "0.1.0"
 
 [[package]]
 name = "str-buf"

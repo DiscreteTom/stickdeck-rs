@@ -7,13 +7,14 @@ use log::{info, trace};
 use std::{sync::mpsc, thread, time::Duration};
 use steamworks::{Client, ClientManager, Input, SResult, SingleClient};
 use steamworks_sys::InputHandle_t;
+use stickdeck_common::{MouseMove, Packet};
 use xbox::XBoxControls;
 
 pub struct InputConfig {
   pub interval_ms: u64,
   pub update_rx: mpsc::Receiver<()>,
   pub ui_tx: mpsc::Sender<String>,
-  pub connected_rx: mpsc::Receiver<mpsc::Sender<XGamepad>>,
+  pub connected_rx: mpsc::Receiver<mpsc::Sender<Packet<XGamepad>>>,
 }
 
 pub fn spawn(input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> {
@@ -68,6 +69,7 @@ pub fn spawn(input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> {
         let mut ctx = (&input, input_handles[0], &mut ui_str);
 
         let mut gamepad = XGamepad::default();
+        let mut mouse = MouseMove::default();
 
         // digital buttons
         let raw = &mut gamepad.buttons.raw;
@@ -88,37 +90,56 @@ pub fn spawn(input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> {
 
         // analog actions
         update_input(&xbox.lt, &mut ctx, |data| {
-          gamepad.left_trigger = f32_to_u8(data.x)
+          gamepad.left_trigger = scale_f32_to_u8(data.x)
         });
         update_input(&xbox.rt, &mut ctx, |data| {
-          gamepad.right_trigger = f32_to_u8(data.x)
+          gamepad.right_trigger = scale_f32_to_u8(data.x)
         });
         update_input(&xbox.l_move, &mut ctx, |data| {
-          gamepad.thumb_lx = f32_to_i16(data.x);
-          gamepad.thumb_ly = f32_to_i16(data.y);
+          gamepad.thumb_lx = scale_f32_to_i16(data.x);
+          gamepad.thumb_ly = scale_f32_to_i16(data.y);
         });
         update_input(&xbox.l_mouse, &mut ctx, |data| {
-          handle_mouse(data.x, false, |x| gamepad.thumb_lx.safe_add(x));
-          handle_mouse(data.y, true, |y| gamepad.thumb_ly.safe_add(y));
+          mouse.x = crop_f32_to_i8(data.x);
+          mouse.y = crop_f32_to_i8(data.y);
         });
         update_input(&xbox.r_move, &mut ctx, |data| {
-          gamepad.thumb_rx = f32_to_i16(data.x);
-          gamepad.thumb_ry = f32_to_i16(data.y);
+          gamepad.thumb_rx = scale_f32_to_i16(data.x);
+          gamepad.thumb_ry = scale_f32_to_i16(data.y);
         });
         update_input(&xbox.r_mouse, &mut ctx, |data| {
-          handle_mouse(data.x, false, |x| gamepad.thumb_rx.safe_add(x));
-          handle_mouse(data.y, true, |y| gamepad.thumb_ry.safe_add(y));
+          mouse.x = crop_f32_to_i8(data.x);
+          mouse.y = crop_f32_to_i8(data.y);
         });
 
         // only send data if client is connected
         net_tx.as_ref().map(|tx| {
           // only send data if it's changed
-          if !gamepad_eq(&gamepad, &last_gamepad) {
-            trace!("Send {:?}", gamepad);
+          match (
+            gamepad_eq(&gamepad, &last_gamepad),
+            mouse.x != 0 || mouse.y != 0,
+          ) {
+            (true, true) => {
+              trace!("Send {:?}", (&gamepad, mouse));
 
-            tx.send(gamepad.clone())
-              .expect("Failed to send gamepad data");
-            last_gamepad = gamepad;
+              tx.send(Packet::GamePadAndMouseMove(gamepad.clone(), mouse))
+                .expect("Failed to send data");
+              last_gamepad = gamepad;
+            }
+            (true, false) => {
+              trace!("Send {:?}", &gamepad);
+
+              tx.send(Packet::GamePad(gamepad.clone()))
+                .expect("Failed to send data");
+              last_gamepad = gamepad;
+            }
+            (false, true) => {
+              trace!("Send {:?}", mouse);
+
+              tx.send(Packet::MouseMove(mouse))
+                .expect("Failed to send data");
+            }
+            (false, false) => (),
           }
         });
         ui_str.map(|s| ui_tx.send(s).expect("Failed to send UI data"));
@@ -190,31 +211,19 @@ fn update_btn(
   });
 }
 
+/// Convert f32 `[-128, 127]` to u8 `[-128, 127]`
+fn crop_f32_to_i8(f: f32) -> i8 {
+  f.max(-128.0).min(127.0) as i8
+}
+
 /// Convert f32 `[0, 1]` to u8 `[0, 255]`
-fn f32_to_u8(f: f32) -> u8 {
+fn scale_f32_to_u8(f: f32) -> u8 {
   (f * 255.0) as u8
 }
 
 /// Convert f32 `(-1, 1)` to i16 `[-32768, 32767]`
-fn f32_to_i16(f: f32) -> i16 {
+fn scale_f32_to_i16(f: f32) -> i16 {
   (f * 32767.0) as i16
-}
-
-fn handle_mouse(n: f32, reverse: bool, mut cb: impl FnMut(i16)) {
-  if n == 0.0 {
-    // if 0, don't update the stick value
-    return;
-  }
-
-  // TODO: make this configurable?
-  // actually user can directly modify the gyro/trackpad sensitivity in Steam
-  // TODO: add some debounce logic?
-  let sensitivity = 5000.0;
-
-  // crop the result to [-32767, 32767]
-  let mapped = (n * sensitivity).max(-32767.0).min(32767.0) as i16;
-
-  cb(if reverse { -mapped } else { mapped });
 }
 
 fn gamepad_eq(a: &XGamepad, b: &XGamepad) -> bool {
@@ -225,16 +234,6 @@ fn gamepad_eq(a: &XGamepad, b: &XGamepad) -> bool {
     && a.thumb_ly == b.thumb_ly
     && a.thumb_rx == b.thumb_rx
     && a.thumb_ry == b.thumb_ry
-}
-
-trait SafeAdd {
-  fn safe_add(&mut self, other: Self);
-}
-
-impl SafeAdd for i16 {
-  fn safe_add(&mut self, other: Self) {
-    *self = self.saturating_add(other)
-  }
 }
 
 #[cfg(test)]
@@ -274,24 +273,5 @@ mod tests {
     let mut a = XGamepad::default();
     a.thumb_ry = 32767;
     assert!(!gamepad_eq(&a, &b));
-  }
-
-  #[test]
-  fn test_safe_add() {
-    let mut a = 32767;
-    a.safe_add(1);
-    assert_eq!(a, 32767);
-
-    let mut a = -32768;
-    a.safe_add(-1);
-    assert_eq!(a, -32768);
-
-    let mut a = 0;
-    a.safe_add(1);
-    assert_eq!(a, 1);
-
-    let mut a = 0;
-    a.safe_add(-1);
-    assert_eq!(a, -1);
   }
 }
