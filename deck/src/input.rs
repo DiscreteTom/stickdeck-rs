@@ -114,30 +114,26 @@ pub fn spawn(input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> {
 
         // only send data if client is connected
         net_tx.as_ref().map(|tx| {
+          let send_packet = |p: Packet<XGamepad>| {
+            trace!("Send {:?}", p);
+            tx.send(p).expect("Failed to send data");
+          };
+
           // only send data if it's changed
           match (
             !gamepad_eq(&gamepad, &last_gamepad), // gamepad changed
             mouse.x != 0 || mouse.y != 0,         // mouse moved
           ) {
             (true, true) => {
-              trace!("Send {:?}", (&gamepad, mouse));
-
-              tx.send(Packet::GamepadAndMouseMove(gamepad.clone(), mouse))
-                .expect("Failed to send data");
+              send_packet(Packet::GamepadAndMouseMove(gamepad.clone(), mouse));
               last_gamepad = gamepad;
             }
             (true, false) => {
-              trace!("Send {:?}", &gamepad);
-
-              tx.send(Packet::Gamepad(gamepad.clone()))
-                .expect("Failed to send data");
+              send_packet(Packet::Gamepad(gamepad.clone()));
               last_gamepad = gamepad;
             }
             (false, true) => {
-              trace!("Send {:?}", mouse);
-
-              tx.send(Packet::MouseMove(mouse))
-                .expect("Failed to send data");
+              send_packet(Packet::MouseMove(mouse));
             }
             (false, false) => (),
           }
