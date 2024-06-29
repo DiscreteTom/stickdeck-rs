@@ -82,20 +82,24 @@ fn init_controller() -> impl FnMut(&XGamepad) {
 }
 
 fn init_mouse() -> impl FnMut(&MouseMove) {
-  move |data: &MouseMove| unsafe {
-    let input = INPUT {
-      r#type: INPUT_MOUSE,
-      Anonymous: INPUT_0 {
-        mi: MOUSEINPUT {
-          dx: data.x as i32,
-          dy: data.y as i32,
-          mouseData: 0,
-          dwFlags: MOUSE_EVENT_FLAGS(0x0001),
-          time: 0,
-          dwExtraInfo: 0,
-        },
+  let mut input = INPUT {
+    r#type: INPUT_MOUSE,
+    Anonymous: INPUT_0 {
+      mi: MOUSEINPUT {
+        dx: 0,
+        dy: 0,
+        mouseData: 0,
+        dwFlags: MOUSE_EVENT_FLAGS(0x0001),
+        time: 0,
+        dwExtraInfo: 0,
       },
-    };
-    SendInput(&[input], std::mem::size_of_val(&input) as i32);
+    },
+  };
+  let size = std::mem::size_of_val(&input) as i32;
+
+  move |data: &MouseMove| unsafe {
+    input.Anonymous.mi.dx = data.x as i32;
+    input.Anonymous.mi.dy = data.y as i32;
+    SendInput(&[input], size);
   }
 }
