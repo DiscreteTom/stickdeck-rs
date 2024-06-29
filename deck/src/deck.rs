@@ -135,7 +135,7 @@ impl Application for App {
         .width(Length::Fill),
         text(&format!("stickdeck v{}", env!("CARGO_PKG_VERSION"))).size(20)
       ]
-      .padding([16, 80])
+      .padding([40, 80])
       .into(),
       State::Started { .. } => column![
         button(
@@ -155,7 +155,7 @@ impl Application for App {
         .size(20),
         text(&self.content).size(16)
       ]
-      .padding([16, 80])
+      .padding([40, 80])
       .into(),
     }
   }

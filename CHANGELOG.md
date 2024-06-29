@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## Next
+
+- Server (Steam Deck)
+  - Note: increase vertical padding to fit performance overlay level 2.
+
 ## v0.1.2
 
 - Client (PC)
