@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.2.1
+
+- Client (PC)
+  - Fix: apply [`SendInput`](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-sendinput) API instead of [`SetCursorPos`](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setcursorpos) to move the mouse cursor for a better compatibility against games.
+
 ## v0.2.0
 
 - **_Breaking Change_**: update network protocol.
