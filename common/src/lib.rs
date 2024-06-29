@@ -26,9 +26,9 @@ impl MouseMove {
 #[derive(Debug)]
 pub enum Packet<Gamepad> {
   Timestamp(u64),
-  GamePad(Gamepad),
+  Gamepad(Gamepad),
   MouseMove(MouseMove),
-  GamePadAndMouseMove(Gamepad, MouseMove),
+  GamepadAndMouseMove(Gamepad, MouseMove),
 }
 
 pub const PACKET_FRAME_SIZE: usize = 16;

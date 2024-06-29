@@ -43,9 +43,9 @@ impl<Gamepad: DeserializableGamepad<Target = Gamepad>> DeserializablePacket for 
         let timestamp = u64::from_le_bytes(buf[1..9].try_into().unwrap());
         Ok(Packet::Timestamp(timestamp))
       }
-      1 => Ok(Packet::GamePad(Gamepad::deserialize(&buf[1..]))),
+      1 => Ok(Packet::Gamepad(Gamepad::deserialize(&buf[1..]))),
       2 => Ok(Packet::MouseMove(MouseMove::deserialize(&buf[1..]))),
-      3 => Ok(Packet::GamePadAndMouseMove(
+      3 => Ok(Packet::GamepadAndMouseMove(
         Gamepad::deserialize(&buf[1..]),
         MouseMove::deserialize(&buf[13..]),
       )),

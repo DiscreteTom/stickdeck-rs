@@ -32,7 +32,7 @@ impl<Gamepad: SerializableGamepad> SerializablePacket for Packet<Gamepad> {
         buf[0] = 0;
         buf[1..9].copy_from_slice(&timestamp.to_le_bytes());
       }
-      Packet::GamePad(gamepad) => {
+      Packet::Gamepad(gamepad) => {
         buf[0] = 1;
         gamepad.serialize(&mut buf[1..]);
       }
@@ -40,7 +40,7 @@ impl<Gamepad: SerializableGamepad> SerializablePacket for Packet<Gamepad> {
         buf[0] = 2;
         mouse.serialize(&mut buf[1..]);
       }
-      Packet::GamePadAndMouseMove(gamepad, mouse) => {
+      Packet::GamepadAndMouseMove(gamepad, mouse) => {
         buf[0] = 3;
         gamepad.serialize(&mut buf[1..]);
         mouse.serialize(&mut buf[13..]);

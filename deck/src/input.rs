@@ -122,14 +122,14 @@ pub fn spawn(input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> {
             (true, true) => {
               trace!("Send {:?}", (&gamepad, mouse));
 
-              tx.send(Packet::GamePadAndMouseMove(gamepad.clone(), mouse))
+              tx.send(Packet::GamepadAndMouseMove(gamepad.clone(), mouse))
                 .expect("Failed to send data");
               last_gamepad = gamepad;
             }
             (true, false) => {
               trace!("Send {:?}", &gamepad);
 
-              tx.send(Packet::GamePad(gamepad.clone()))
+              tx.send(Packet::Gamepad(gamepad.clone()))
                 .expect("Failed to send data");
               last_gamepad = gamepad;
             }

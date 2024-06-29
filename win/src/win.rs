@@ -37,9 +37,9 @@ fn main() {
 
     match data {
       Packet::Timestamp(_timestamp) => todo!(), // TODO
-      Packet::GamePad(gamepad) => update_controller(&gamepad),
+      Packet::Gamepad(gamepad) => update_controller(&gamepad),
       Packet::MouseMove(data) => move_mouse(&data),
-      Packet::GamePadAndMouseMove(gamepad, data) => {
+      Packet::GamepadAndMouseMove(gamepad, data) => {
         update_controller(&gamepad);
         move_mouse(&data);
       }
