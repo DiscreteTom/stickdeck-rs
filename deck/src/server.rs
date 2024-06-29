@@ -45,5 +45,5 @@ mod tests {
   use crate::gamepad::XButtons;
 
   include!("../../win/src/deserialize.rs");
-  include!("../../common/test_serialize_deserialize.rs");
+  include!("../../snippet/test_serialize_deserialize.rs");
 }

@@ -26,5 +26,5 @@ mod tests {
   use super::*;
 
   include!("../../deck/src/serialize.rs");
-  include!("../../common/test_serialize_deserialize.rs");
+  include!("../../snippet/test_serialize_deserialize.rs");
 }
