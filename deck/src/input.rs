@@ -116,8 +116,8 @@ pub fn spawn(input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> {
         net_tx.as_ref().map(|tx| {
           // only send data if it's changed
           match (
-            gamepad_eq(&gamepad, &last_gamepad),
-            mouse.x != 0 || mouse.y != 0,
+            !gamepad_eq(&gamepad, &last_gamepad), // gamepad changed
+            mouse.x != 0 || mouse.y != 0,         // mouse moved
           ) {
             (true, true) => {
               trace!("Send {:?}", (&gamepad, mouse));
