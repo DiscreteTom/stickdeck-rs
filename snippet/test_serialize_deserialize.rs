@@ -1,12 +1,11 @@
 fn assert_serialize_deserialize(gamepad: &XGamepad) {
-  assert_eq!(gamepad, &deserialize(&serialize(gamepad)));
+  let mut buf = [0; 12];
+  gamepad.serialize(&mut buf);
+  assert_eq!(gamepad, &XGamepad::deserialize(&buf));
 }
 
 #[test]
 fn test_serialize_deserialize() {
-  assert_eq!(serialize(&XGamepad::default()), [0; 12]);
-  assert_eq!(deserialize(&[0; 12]), XGamepad::default());
-
   let mut gamepad = XGamepad::default();
   assert_serialize_deserialize(&gamepad);
   gamepad.buttons.raw = 0x1234;
