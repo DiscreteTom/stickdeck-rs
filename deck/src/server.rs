@@ -48,7 +48,7 @@ fn write_stream(stream: &mut TcpStream, buf: &[u8; PACKET_FRAME_SIZE]) -> io::Re
   Ok(())
 }
 
-include!("serialize.rs");
+include!("../../snippet/serialize.rs");
 
 #[cfg(test)]
 mod tests {
@@ -56,6 +56,6 @@ mod tests {
   use crate::gamepad::XButtons;
   use stickdeck_common::MouseMove;
 
-  include!("../../win/src/deserialize.rs");
+  include!("../../snippet/deserialize.rs");
   include!("../../snippet/test_serialize_deserialize.rs");
 }

@@ -26,12 +26,12 @@ pub fn spawn(server: &str, tx: mpsc::Sender<Packet<XGamepad>>) {
   });
 }
 
-include!("deserialize.rs");
+include!("../../snippet/deserialize.rs");
 
 #[cfg(test)]
 mod tests {
   use super::*;
 
-  include!("../../deck/src/serialize.rs");
+  include!("../../snippet/serialize.rs");
   include!("../../snippet/test_serialize_deserialize.rs");
 }
