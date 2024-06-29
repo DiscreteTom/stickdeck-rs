@@ -83,7 +83,6 @@ include!("../../snippet/serialize.rs");
 mod tests {
   use super::*;
   use crate::gamepad::XButtons;
-  use stickdeck_common::MouseMove;
 
   include!("../../snippet/deserialize.rs");
   include!("../../snippet/test_serialize_deserialize.rs");
