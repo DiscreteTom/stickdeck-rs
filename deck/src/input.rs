@@ -100,16 +100,16 @@ pub fn spawn(input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> {
           gamepad.thumb_ly = scale_f32_to_i16(data.y);
         });
         update_input(&xbox.l_mouse, &mut ctx, |data| {
-          mouse.x = crop_f32_to_i8(data.x);
-          mouse.y = crop_f32_to_i8(data.y);
+          mouse.x.safe_add(crop_f32_to_i8(data.x));
+          mouse.y.safe_add(crop_f32_to_i8(data.y));
         });
         update_input(&xbox.r_move, &mut ctx, |data| {
           gamepad.thumb_rx = scale_f32_to_i16(data.x);
           gamepad.thumb_ry = scale_f32_to_i16(data.y);
         });
         update_input(&xbox.r_mouse, &mut ctx, |data| {
-          mouse.x = crop_f32_to_i8(data.x);
-          mouse.y = crop_f32_to_i8(data.y);
+          mouse.x.safe_add(crop_f32_to_i8(data.x));
+          mouse.y.safe_add(crop_f32_to_i8(data.y));
         });
 
         // only send data if client is connected
@@ -236,6 +236,16 @@ fn gamepad_eq(a: &XGamepad, b: &XGamepad) -> bool {
     && a.thumb_ry == b.thumb_ry
 }
 
+trait SafeAdd {
+  fn safe_add(&mut self, other: Self);
+}
+
+impl SafeAdd for i8 {
+  fn safe_add(&mut self, other: Self) {
+    *self = self.saturating_add(other);
+  }
+}
+
 #[cfg(test)]
 mod tests {
   use super::*;
@@ -273,5 +283,24 @@ mod tests {
     let mut a = XGamepad::default();
     a.thumb_ry = 32767;
     assert!(!gamepad_eq(&a, &b));
+  }
+
+  #[test]
+  fn test_safe_add() {
+    let mut a = 127;
+    a.safe_add(1);
+    assert_eq!(a, 127);
+
+    let mut a = -128;
+    a.safe_add(-1);
+    assert_eq!(a, -128);
+
+    let mut a = 0;
+    a.safe_add(1);
+    assert_eq!(a, 1);
+
+    let mut a = 0;
+    a.safe_add(-1);
+    assert_eq!(a, -1);
   }
 }
