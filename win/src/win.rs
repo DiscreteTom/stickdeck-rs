@@ -36,7 +36,7 @@ fn main() {
     trace!("Got {:?}", data);
 
     match data {
-      Packet::Timestamp(_timestamp) => todo!(), // TODO
+      Packet::Timestamp(_timestamp) => {} // TODO
       Packet::Gamepad(gamepad) => update_controller(&gamepad),
       Packet::MouseMove(data) => move_mouse(&data),
       Packet::GamepadAndMouseMove(gamepad, data) => {
