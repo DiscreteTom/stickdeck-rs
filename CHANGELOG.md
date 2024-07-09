@@ -4,6 +4,7 @@
 
 - Client (PC)
   - Feat: add `launch.bat` to start the client side and create a log file for debugging.
+  - Feat: add retry when connecting to the server.
   - Fix: `debug.bat` will pause on error.
 - Server (Steam Deck)
   - Feat: create a log file for debugging.

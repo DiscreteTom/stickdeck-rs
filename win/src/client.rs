@@ -4,8 +4,18 @@ use stickdeck_common::{MouseMove, Packet, PACKET_FRAME_SIZE};
 use vigem_client::{XButtons, XGamepad};
 
 pub fn spawn(server: &str, tx: mpsc::Sender<Packet<XGamepad>>) {
-  info!("Connecting to the server...");
-  let mut stream = TcpStream::connect(server).expect("Failed to connect to the server");
+  info!("Connecting to {} ...", server);
+  let mut retry = 3;
+  let mut stream = loop {
+    if retry == 0 {
+      panic!("Failed to connect to the server: retry limit exceeded");
+    }
+    if let Ok(stream) = TcpStream::connect(server) {
+      break stream;
+    }
+    info!("Failed to connect to the server: retrying ...");
+    retry -= 1;
+  };
   info!("Connected");
 
   thread::spawn(move || {
