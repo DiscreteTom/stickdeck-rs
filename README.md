@@ -52,7 +52,7 @@ Now you can proceed to the [client side setup](#client-side-pc).
 5. (Optional) If you want to test the controller, run `joy.cpl`.
 
 > [!NOTE]
-> By default the client will try to connect `steamdeck:7777`. If you want to connect to a different server, you can run `stickdeck-win.exe [server-ip]`.
+> By default the client will try to connect `steamdeck:7777`. If you want to connect to a different server, you can edit `launch.bat`, replace the `steamdeck` with your server IP.
 > You can find the server IP on the first line of the StickDeck UI window while the server is started.
 
 ## FAQ
