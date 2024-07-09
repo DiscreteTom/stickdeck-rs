@@ -2,6 +2,8 @@
 
 ## Next
 
+- Client (PC)
+  - Feat: add `launch.bat` to start the client side and create a log file for debugging.
 - Server (Steam Deck)
   - Feat: create a log file for debugging.
 
