@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## Next
+
+- Server (Steam Deck)
+  - Feat: create a log file for debugging.
+
 ## v0.2.1
 
 - Client (PC)
