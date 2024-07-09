@@ -1,8 +1,5 @@
 @REM This file should be included in the stickdeck-win release zip.
-@echo off
+@echo off & setlocal
 
-setlocal
-  set RUST_LOG=debug && launch.bat
-endlocal
-
+cmd /c "set RUST_LOG=debug && launch.bat"
 pause
