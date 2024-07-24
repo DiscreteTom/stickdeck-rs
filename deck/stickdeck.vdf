@@ -36,19 +36,14 @@
           "title"         "#Action_LeftMove"
           "input_mode"    "joystick_move"
         }
-        "LeftMouse"
-        {
-          "title"         "#Action_LeftMouse"
-          "input_mode"    "absolute_mouse"
-        }
         "RightMove"
         {
           "title"         "#Action_RightMove"
           "input_mode"    "joystick_move"
         }
-        "RightMouse"
+        "MouseMove"
         {
-          "title"         "#Action_RightMouse"
+          "title"         "#Action_MouseMove"
           "input_mode"    "absolute_mouse"
         }
         "MouseScroll"
@@ -82,10 +77,9 @@
       "Action_BtnRightMouse"    "Right Mouse Button"
       "Action_LT"               "Left Trigger"
       "Action_RT"               "Right Trigger"
-      "Action_LeftMove"         "Left Stick (as Joystick Move)"
-      "Action_LeftMouse"        "Left Stick (as Absolute Mouse)"
-      "Action_RightMove"        "Right Stick (as Joystick Move)"
-      "Action_RightMouse"       "Right Stick (as Absolute Mouse)"
+      "Action_LeftMove"         "Left JoyStick"
+      "Action_RightMove"        "Right JoyStick"
+      "Action_MouseMove"        "Mouse Move"
       "Action_MouseScroll"      "Mouse Scroll"
     }
   }

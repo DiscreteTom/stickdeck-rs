@@ -27,9 +27,8 @@ pub struct XBoxControls {
   pub lt: InputAnalogAction,
   pub rt: InputAnalogAction,
   pub l_move: InputAnalogAction,
-  pub l_mouse: InputAnalogAction,
   pub r_move: InputAnalogAction,
-  pub r_mouse: InputAnalogAction,
+  pub mouse_move: InputAnalogAction,
   pub mouse_scroll: InputAnalogAction,
 }
 
@@ -59,9 +58,8 @@ impl XBoxControls {
       lt: InputAnalogAction::new(input, "LeftTrigger")?,
       rt: InputAnalogAction::new(input, "RightTrigger")?,
       l_move: InputAnalogAction::new(input, "LeftMove")?,
-      l_mouse: InputAnalogAction::new(input, "LeftMouse")?,
       r_move: InputAnalogAction::new(input, "RightMove")?,
-      r_mouse: InputAnalogAction::new(input, "RightMouse")?,
+      mouse_move: InputAnalogAction::new(input, "MouseMove")?,
       mouse_scroll: InputAnalogAction::new(input, "MouseScroll")?,
     })
   }

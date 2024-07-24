@@ -1,13 +1,15 @@
 # CHANGELOG
 
-## Next
+## v0.3.0
 
+- **_Breaking Change_**: update network protocol and action set.
 - Client (PC)
   - Feat: add `launch.bat` to start the client side and create a log file for debugging.
   - Feat: add retry when connecting to the server.
   - Feat: support left & right mouse buttons and scroll wheel.
   - Fix: `debug.bat` will pause on error.
 - Server (Steam Deck)
+  - **_Breaking Change_**: remove `LeftMouse` and `RightMouse` from the action set, use `MouseMove` instead.
   - Feat: create a log file for debugging.
   - Feat: add `Left Mouse Button`, `Right Mouse Button` and `Mouse Scroll` to the action set.
 
