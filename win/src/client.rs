@@ -1,6 +1,6 @@
 use log::{info, warn};
 use std::{io::Read, net::TcpStream, sync::mpsc, thread};
-use stickdeck_common::{MouseMove, Packet, PACKET_FRAME_SIZE};
+use stickdeck_common::{Mouse, Packet, PACKET_FRAME_SIZE};
 use vigem_client::{XButtons, XGamepad};
 
 pub fn spawn(server: &str, tx: mpsc::Sender<Packet<XGamepad>>) {
@@ -55,10 +55,10 @@ impl<Gamepad: DeserializableGamepad<Target = Gamepad>> DeserializablePacket for 
         Ok(Packet::Timestamp(timestamp))
       }
       1 => Ok(Packet::Gamepad(Gamepad::deserialize(&buf[1..]))),
-      2 => Ok(Packet::MouseMove(MouseMove::deserialize(&buf[1..]))),
-      3 => Ok(Packet::GamepadAndMouseMove(
+      2 => Ok(Packet::Mouse(Mouse::deserialize(&buf[1..]))),
+      3 => Ok(Packet::GamepadAndMouse(
         Gamepad::deserialize(&buf[1..]),
-        MouseMove::deserialize(&buf[13..]),
+        Mouse::deserialize(&buf[13..]),
       )),
       _ => Err(buf[0]),
     }

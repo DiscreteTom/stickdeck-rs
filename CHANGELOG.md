@@ -5,9 +5,11 @@
 - Client (PC)
   - Feat: add `launch.bat` to start the client side and create a log file for debugging.
   - Feat: add retry when connecting to the server.
+  - Feat: support left & right mouse buttons.
   - Fix: `debug.bat` will pause on error.
 - Server (Steam Deck)
   - Feat: create a log file for debugging.
+  - Feat: add `Left Mouse Button` and `Right Mouse Button` to the action set.
 
 ## v0.2.1
 

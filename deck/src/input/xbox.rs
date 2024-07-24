@@ -21,6 +21,8 @@ pub struct XBoxControls {
   pub btn_b: InputDigitalAction,
   pub btn_x: InputDigitalAction,
   pub btn_y: InputDigitalAction,
+  pub btn_l_mouse: InputDigitalAction,
+  pub btn_r_mouse: InputDigitalAction,
   // analog actions
   pub lt: InputAnalogAction,
   pub rt: InputAnalogAction,
@@ -50,6 +52,8 @@ impl XBoxControls {
       btn_b: InputDigitalAction::new(input, "BtnB")?,
       btn_x: InputDigitalAction::new(input, "BtnX")?,
       btn_y: InputDigitalAction::new(input, "BtnY")?,
+      btn_l_mouse: InputDigitalAction::new(input, "BtnLeftMouse")?,
+      btn_r_mouse: InputDigitalAction::new(input, "BtnRightMouse")?,
 
       lt: InputAnalogAction::new(input, "LeftTrigger")?,
       rt: InputAnalogAction::new(input, "RightTrigger")?,

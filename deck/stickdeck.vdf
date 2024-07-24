@@ -21,6 +21,8 @@
         "BtnB"              "#Action_BtnB"
         "BtnX"              "#Action_BtnX"
         "BtnY"              "#Action_BtnY"
+        "BtnLeftMouse"      "#Action_BtnLeftMouse"
+        "BtnRightMouse"     "#Action_BtnRightMouse"
       }
       "AnalogTrigger"
       {
@@ -71,6 +73,8 @@
       "Action_BtnB"             "B Button"
       "Action_BtnX"             "X Button"
       "Action_BtnY"             "Y Button"
+      "Action_BtnLeftMouse"     "Left Mouse Button"
+      "Action_BtnRightMouse"    "Right Mouse Button"
       "Action_LT"               "Left Trigger"
       "Action_RT"               "Right Trigger"
       "Action_LeftMove"         "Left Stick (as Joystick Move)"

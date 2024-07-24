@@ -7,7 +7,7 @@ use log::{info, trace};
 use std::{sync::mpsc, thread, time::Duration};
 use steamworks::{Client, ClientManager, Input, SResult, SingleClient};
 use steamworks_sys::InputHandle_t;
-use stickdeck_common::{MouseMove, Packet};
+use stickdeck_common::{Mouse, MouseButton, Packet};
 use xbox::XBoxControls;
 
 pub struct InputConfig {
@@ -54,6 +54,7 @@ pub fn spawn(input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> {
     } = input_rx.recv().expect("Failed to receive input data");
     let mut net_tx = None;
     let mut last_gamepad = XGamepad::default();
+    let mut last_mouse_button = MouseButton::default();
 
     poll(
       &single,
@@ -69,10 +70,11 @@ pub fn spawn(input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> {
         let mut ctx = (&input, input_handles[0], &mut ui_str);
 
         let mut gamepad = XGamepad::default();
-        let mut mouse = MouseMove::default();
+        let mut mouse = Mouse::default();
 
         // digital buttons
         let raw = &mut gamepad.buttons.raw;
+        let mb = &mut mouse.buttons;
         update_btn(&xbox.btn_up, &mut ctx, || *raw |= XButtons::UP);
         update_btn(&xbox.btn_down, &mut ctx, || *raw |= XButtons::DOWN);
         update_btn(&xbox.btn_left, &mut ctx, || *raw |= XButtons::LEFT);
@@ -87,6 +89,8 @@ pub fn spawn(input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> {
         update_btn(&xbox.btn_b, &mut ctx, || *raw |= XButtons::B);
         update_btn(&xbox.btn_x, &mut ctx, || *raw |= XButtons::X);
         update_btn(&xbox.btn_y, &mut ctx, || *raw |= XButtons::Y);
+        update_btn(&xbox.btn_l_mouse, &mut ctx, || mb.left_button_down());
+        update_btn(&xbox.btn_r_mouse, &mut ctx, || mb.right_button_down());
 
         // analog actions
         update_input(&xbox.lt, &mut ctx, |data| {
@@ -121,19 +125,26 @@ pub fn spawn(input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> {
 
           // only send data if it's changed
           match (
-            !gamepad_eq(&gamepad, &last_gamepad), // gamepad changed
-            mouse.x != 0 || mouse.y != 0,         // mouse moved
+            // gamepad changed
+            !gamepad_eq(&gamepad, &last_gamepad),
+            // mouse moved or button state changed
+            // DON'T just check if current mouse equals last mouse
+            // because even the x and y is the same with the last,
+            // we should still send the data if they are not 0
+            mouse.x != 0 || mouse.y != 0 || mouse.buttons != last_mouse_button,
           ) {
             (true, true) => {
-              send_packet(Packet::GamepadAndMouseMove(gamepad.clone(), mouse));
+              send_packet(Packet::GamepadAndMouse(gamepad.clone(), mouse));
               last_gamepad = gamepad;
+              last_mouse_button = mouse.buttons;
             }
             (true, false) => {
               send_packet(Packet::Gamepad(gamepad.clone()));
               last_gamepad = gamepad;
             }
             (false, true) => {
-              send_packet(Packet::MouseMove(mouse));
+              send_packet(Packet::Mouse(mouse));
+              last_mouse_button = mouse.buttons;
             }
             (false, false) => (),
           }

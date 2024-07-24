@@ -2,10 +2,11 @@ mod client;
 
 use log::{debug, info, log_enabled, trace, Level};
 use std::{env, sync::mpsc, time::Instant};
-use stickdeck_common::{MouseMove, Packet};
+use stickdeck_common::{Mouse, MouseButton, Packet};
 use vigem_client::{Client, TargetId, XGamepad, Xbox360Wired};
 use windows::Win32::UI::Input::KeyboardAndMouse::{
-  SendInput, INPUT, INPUT_0, INPUT_MOUSE, MOUSEINPUT, MOUSE_EVENT_FLAGS,
+  SendInput, INPUT, INPUT_0, INPUT_MOUSE, MOUSEEVENTF_LEFTDOWN, MOUSEEVENTF_LEFTUP,
+  MOUSEEVENTF_MOVE, MOUSEEVENTF_RIGHTDOWN, MOUSEEVENTF_RIGHTUP, MOUSEINPUT, MOUSE_EVENT_FLAGS,
 };
 
 fn main() {
@@ -40,8 +41,8 @@ fn main() {
     match data {
       Packet::Timestamp(_timestamp) => {} // TODO
       Packet::Gamepad(gamepad) => update_controller(&gamepad),
-      Packet::MouseMove(data) => move_mouse(&data),
-      Packet::GamepadAndMouseMove(gamepad, data) => {
+      Packet::Mouse(data) => move_mouse(&data),
+      Packet::GamepadAndMouse(gamepad, data) => {
         update_controller(&gamepad);
         move_mouse(&data);
       }
@@ -81,7 +82,7 @@ fn init_controller() -> impl FnMut(&XGamepad) {
   }
 }
 
-fn init_mouse() -> impl FnMut(&MouseMove) {
+fn init_mouse() -> impl FnMut(&Mouse) {
   let mut input = INPUT {
     r#type: INPUT_MOUSE,
     Anonymous: INPUT_0 {
@@ -89,17 +90,39 @@ fn init_mouse() -> impl FnMut(&MouseMove) {
         dx: 0,
         dy: 0,
         mouseData: 0,
-        dwFlags: MOUSE_EVENT_FLAGS(0x0001),
+        dwFlags: MOUSE_EVENT_FLAGS(0),
         time: 0,
         dwExtraInfo: 0,
       },
     },
   };
   let size = std::mem::size_of_val(&input) as i32;
+  let mut last_mb = MouseButton::default();
 
-  move |data: &MouseMove| unsafe {
+  move |data: &Mouse| unsafe {
     input.Anonymous.mi.dx = data.x as i32;
     input.Anonymous.mi.dy = data.y as i32;
+    input.Anonymous.mi.dwFlags.0 = 0;
+    if data.x != 0 || data.y != 0 {
+      input.Anonymous.mi.dwFlags.0 |= MOUSEEVENTF_MOVE.0;
+    }
+    if data.buttons != last_mb {
+      if data.buttons.is_left_button_down() != last_mb.is_left_button_down() {
+        if data.buttons.is_left_button_down() {
+          input.Anonymous.mi.dwFlags.0 |= MOUSEEVENTF_LEFTDOWN.0;
+        } else {
+          input.Anonymous.mi.dwFlags.0 |= MOUSEEVENTF_LEFTUP.0;
+        }
+      }
+      if data.buttons.is_right_button_down() != last_mb.is_right_button_down() {
+        if data.buttons.is_right_button_down() {
+          input.Anonymous.mi.dwFlags.0 |= MOUSEEVENTF_RIGHTDOWN.0;
+        } else {
+          input.Anonymous.mi.dwFlags.0 |= MOUSEEVENTF_RIGHTUP.0;
+        }
+      }
+      last_mb = data.buttons;
+    }
     SendInput(&[input], size);
   }
 }
