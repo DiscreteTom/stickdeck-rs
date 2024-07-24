@@ -6,7 +6,8 @@ use stickdeck_common::{Mouse, MouseButton, Packet};
 use vigem_client::{Client, TargetId, XGamepad, Xbox360Wired};
 use windows::Win32::UI::Input::KeyboardAndMouse::{
   SendInput, INPUT, INPUT_0, INPUT_MOUSE, MOUSEEVENTF_LEFTDOWN, MOUSEEVENTF_LEFTUP,
-  MOUSEEVENTF_MOVE, MOUSEEVENTF_RIGHTDOWN, MOUSEEVENTF_RIGHTUP, MOUSEINPUT, MOUSE_EVENT_FLAGS,
+  MOUSEEVENTF_MOVE, MOUSEEVENTF_RIGHTDOWN, MOUSEEVENTF_RIGHTUP, MOUSEEVENTF_WHEEL, MOUSEINPUT,
+  MOUSE_EVENT_FLAGS,
 };
 
 fn main() {
@@ -42,10 +43,6 @@ fn main() {
       Packet::Timestamp(_timestamp) => {} // TODO
       Packet::Gamepad(gamepad) => update_controller(&gamepad),
       Packet::Mouse(data) => move_mouse(&data),
-      Packet::GamepadAndMouse(gamepad, data) => {
-        update_controller(&gamepad);
-        move_mouse(&data);
-      }
     }
 
     if log_enabled!(Level::Debug) {
@@ -103,6 +100,7 @@ fn init_mouse() -> impl FnMut(&Mouse) {
     input.Anonymous.mi.dx = data.x as i32;
     input.Anonymous.mi.dy = data.y as i32;
     input.Anonymous.mi.dwFlags.0 = 0;
+    input.Anonymous.mi.mouseData = data.scroll as u32;
     if data.x != 0 || data.y != 0 {
       input.Anonymous.mi.dwFlags.0 |= MOUSEEVENTF_MOVE.0;
     }
@@ -122,6 +120,9 @@ fn init_mouse() -> impl FnMut(&Mouse) {
         }
       }
       last_mb = data.buttons;
+    }
+    if data.scroll != 0 {
+      input.Anonymous.mi.dwFlags.0 |= MOUSEEVENTF_WHEEL.0;
     }
     SendInput(&[input], size);
   }

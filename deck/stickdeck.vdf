@@ -51,6 +51,11 @@
           "title"         "#Action_RightMouse"
           "input_mode"    "absolute_mouse"
         }
+        "MouseScroll"
+        {
+          "title"         "#Action_MouseScroll"
+          "input_mode"    "absolute_mouse"
+        }
       }
     }
   }
@@ -81,6 +86,7 @@
       "Action_LeftMouse"        "Left Stick (as Absolute Mouse)"
       "Action_RightMove"        "Right Stick (as Joystick Move)"
       "Action_RightMouse"       "Right Stick (as Absolute Mouse)"
+      "Action_MouseScroll"      "Mouse Scroll"
     }
   }
 }

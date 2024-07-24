@@ -68,11 +68,6 @@ impl<Gamepad: SerializableGamepad> SerializablePacket for Packet<Gamepad> {
         buf[0] = 2;
         mouse.serialize(&mut buf[1..]);
       }
-      Packet::GamepadAndMouse(gamepad, mouse) => {
-        buf[0] = 3;
-        gamepad.serialize(&mut buf[1..]);
-        mouse.serialize(&mut buf[13..]);
-      }
     }
   }
 }

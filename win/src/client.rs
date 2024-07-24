@@ -56,10 +56,6 @@ impl<Gamepad: DeserializableGamepad<Target = Gamepad>> DeserializablePacket for 
       }
       1 => Ok(Packet::Gamepad(Gamepad::deserialize(&buf[1..]))),
       2 => Ok(Packet::Mouse(Mouse::deserialize(&buf[1..]))),
-      3 => Ok(Packet::GamepadAndMouse(
-        Gamepad::deserialize(&buf[1..]),
-        Mouse::deserialize(&buf[13..]),
-      )),
       _ => Err(buf[0]),
     }
   }

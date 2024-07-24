@@ -115,6 +115,9 @@ pub fn spawn(input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> {
           mouse.x.safe_add(crop_f32_to_i8(data.x));
           mouse.y.safe_add(crop_f32_to_i8(data.y));
         });
+        update_input(&xbox.mouse_scroll, &mut ctx, |data| {
+          mouse.scroll = crop_f32_to_i8(data.y);
+        });
 
         // only send data if client is connected
         net_tx.as_ref().map(|tx| {
@@ -123,30 +126,19 @@ pub fn spawn(input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> {
             tx.send(p).expect("Failed to send data");
           };
 
-          // only send data if it's changed
-          match (
-            // gamepad changed
-            !gamepad_eq(&gamepad, &last_gamepad),
-            // mouse moved or button state changed
-            // DON'T just check if current mouse equals last mouse
-            // because even the x and y is the same with the last,
-            // we should still send the data if they are not 0
-            mouse.x != 0 || mouse.y != 0 || mouse.buttons != last_mouse_button,
-          ) {
-            (true, true) => {
-              send_packet(Packet::GamepadAndMouse(gamepad.clone(), mouse));
-              last_gamepad = gamepad;
-              last_mouse_button = mouse.buttons;
-            }
-            (true, false) => {
-              send_packet(Packet::Gamepad(gamepad.clone()));
-              last_gamepad = gamepad;
-            }
-            (false, true) => {
-              send_packet(Packet::Mouse(mouse));
-              last_mouse_button = mouse.buttons;
-            }
-            (false, false) => (),
+          // gamepad changed
+          if !gamepad_eq(&gamepad, &last_gamepad) {
+            send_packet(Packet::Gamepad(gamepad.clone()));
+            last_gamepad = gamepad;
+          }
+          // mouse moved or scrolled or button state changed
+          // DON'T just check if current mouse equals last mouse
+          // because even if the x/y/scroll is the same with the last,
+          // we should still send the data as the delta if they are not 0
+          if mouse.x != 0 || mouse.y != 0 || mouse.buttons != last_mouse_button || mouse.scroll != 0
+          {
+            send_packet(Packet::Mouse(mouse));
+            last_mouse_button = mouse.buttons;
           }
         });
         ui_str.map(|s| ui_tx.send(s).expect("Failed to send UI data"));
