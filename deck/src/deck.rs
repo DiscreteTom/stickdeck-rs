@@ -83,7 +83,7 @@ impl Application for App {
   }
 
   fn title(&self) -> String {
-    "Stickdeck".into()
+    "StickDeck".into()
   }
 
   fn theme(&self) -> Self::Theme {
