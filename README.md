@@ -10,19 +10,19 @@ Turn your Steam Deck into a joystick for your PC, with trackpad and gyro support
 
 ### Server Side (Steam Deck)
 
-> [!NOTE]
+<!-- > [!NOTE]
 > The Steam version and the GitHub version are totally the same,
 > but setup via Steam is way more easier for most users,
-> and you can also get automatic updates.
+> and you can also get automatic updates. -->
 
 > [!IMPORTANT]
 > The server side will be treated as a game on Steam Deck, so you can't play Steam games on PC while the server side is running on Steam Deck <ins>**_with the same Steam account_**</ins>. You can still play non-Steam games on PC, or you can register a new Steam account for the server side.
 
-#### Install from Steam
+<!-- #### Install from Steam (WIP)
 
 Just acquire the StickDeck from Steam and download it to your Steam Deck, then no further setup is needed.
 
-Now you can proceed to the [client side setup](#client-side-pc).
+Now you can proceed to the [client side setup](#client-side-pc). -->
 
 #### Install from GitHub
 
