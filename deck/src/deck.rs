@@ -7,13 +7,15 @@ mod utils;
 use config::Config;
 use iced::{
   alignment::Horizontal,
-  executor, time,
+  executor,
+  subscription::unfold,
   widget::{button, column, slider, text, toggler},
   window, Application, Command, Element, Length, Settings, Theme,
 };
 use input::InputConfig;
 use local_ip_address::local_ip;
-use std::{env, net::IpAddr, sync::mpsc, time::Duration};
+use std::{env, net::IpAddr, sync::mpsc};
+use tokio::sync::watch;
 
 fn main() {
   if env::var("RUST_LOG").is_err() {
@@ -38,10 +40,7 @@ struct Flags {
 
 enum State {
   Home,
-  Started {
-    update_tx: mpsc::Sender<()>,
-    ui_rx: mpsc::Receiver<String>,
-  },
+  Started,
 }
 
 #[derive(Debug, Clone)]
@@ -49,7 +48,7 @@ enum Message {
   SetDarkMode(bool),
   SetInputUpdateInterval(u64),
   StartServer,
-  Update,
+  Update(String),
   Exit,
 }
 
@@ -59,7 +58,8 @@ struct App {
   port: u16,
   state: State,
   content: String,
-  ui_update_interval_ms: u64,
+  ui_tx: watch::Sender<String>,
+  ui_rx: watch::Receiver<String>,
 }
 
 impl Application for App {
@@ -69,13 +69,15 @@ impl Application for App {
   type Theme = Theme;
 
   fn new(flags: Self::Flags) -> (App, Command<Self::Message>) {
+    let (ui_tx, ui_rx) = watch::channel("".to_string());
     (
       App {
         local_ip: local_ip().expect("Failed to get local ip address"),
         port: 7777,
         state: State::Home,
         content: "".into(),
-        ui_update_interval_ms: 30,
+        ui_tx,
+        ui_rx,
         flags,
       },
       window::maximize(true),
@@ -137,7 +139,7 @@ impl Application for App {
       ]
       .padding([40, 80])
       .into(),
-      State::Started { .. } => column![
+      State::Started => column![
         button(
           text("Exit")
             .size(30)
@@ -161,7 +163,11 @@ impl Application for App {
   }
 
   fn subscription(&self) -> iced::Subscription<Self::Message> {
-    time::every(Duration::from_millis(self.ui_update_interval_ms)).map(|_| Message::Update)
+    unfold("ui update", self.ui_rx.clone(), move |mut rx| async move {
+      rx.changed().await.expect("ui content channel closed");
+      let content = rx.borrow_and_update().clone();
+      (Message::Update(content), rx)
+    })
   }
 
   fn update(&mut self, message: Self::Message) -> Command<Self::Message> {
@@ -175,8 +181,6 @@ impl Application for App {
         self.flags.config.save();
       }
       Message::StartServer => {
-        let (update_tx, update_rx) = mpsc::channel();
-        let (ui_tx, ui_rx) = mpsc::channel();
         let (connected_tx, connected_rx) = mpsc::channel();
 
         server::spawn(&format!("{}:{}", self.local_ip, self.port), connected_tx);
@@ -186,22 +190,16 @@ impl Application for App {
           .input_config_tx
           .send(InputConfig {
             interval_ms: self.flags.config.input_update_interval_ms,
-            update_rx,
-            ui_tx,
+            ui_tx: self.ui_tx.clone(),
             connected_rx,
+            ui_update_interval_ms: 30,
           })
           .expect("Failed to send config to the input thread");
 
-        self.state = State::Started { update_tx, ui_rx };
+        self.state = State::Started;
       }
-      Message::Update => {
-        if let State::Started { update_tx, ui_rx } = &self.state {
-          update_tx.send(()).expect("Failed to send update signal");
-          ui_rx
-            .recv()
-            .map(|content| self.content = content)
-            .expect("Failed to receive data from the input thread");
-        }
+      Message::Update(content) => {
+        self.content = content;
       }
       Message::Exit => {
         std::process::exit(0);

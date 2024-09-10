@@ -4,22 +4,28 @@ mod xbox;
 use crate::gamepad::{XButtons, XGamepad};
 use action::{InputAction, InputActionData, InputDigitalAction, UpdatableInputAction};
 use log::{info, trace};
-use std::{sync::mpsc, thread, time::Duration};
+use std::{
+  sync::mpsc,
+  thread,
+  time::{Duration, Instant},
+};
 use steamworks::{Client, ClientManager, Input, SResult, SingleClient};
 use steamworks_sys::InputHandle_t;
 use stickdeck_common::{Mouse, MouseButton, Packet};
+use tokio::sync::watch;
 use xbox::XBoxControls;
 
 pub struct InputConfig {
   pub interval_ms: u64,
-  pub update_rx: mpsc::Receiver<()>,
-  pub ui_tx: mpsc::Sender<String>,
+  pub ui_tx: watch::Sender<String>,
   pub connected_rx: mpsc::Receiver<mpsc::Sender<Packet<XGamepad>>>,
+  pub ui_update_interval_ms: u128,
 }
 
 pub fn spawn(input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> {
   let (client, single) = Client::init()?;
 
+  // steam client is not `Send`, so we have to use std thread and channel instead of tokio
   thread::spawn(move || {
     let input = client.input();
     input.init(false);
@@ -48,13 +54,14 @@ pub fn spawn(input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> {
 
     let InputConfig {
       interval_ms,
-      update_rx,
       ui_tx,
       connected_rx,
+      ui_update_interval_ms,
     } = input_rx.recv().expect("Failed to receive input data");
     let mut net_tx = None;
     let mut last_gamepad = XGamepad::default();
     let mut last_mouse_button = MouseButton::default();
+    let mut last_update = Instant::now();
 
     poll(
       &single,
@@ -66,7 +73,12 @@ pub fn spawn(input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> {
         }
 
         // prepare ctx
-        let mut ui_str = update_rx.try_recv().ok().map(|_| String::new());
+        let mut ui_str = if last_update.elapsed().as_millis() > ui_update_interval_ms {
+          last_update = Instant::now();
+          Some(String::new())
+        } else {
+          None
+        };
         let mut ctx = (&input, input_handles[0], &mut ui_str);
 
         let mut gamepad = XGamepad::default();
