@@ -73,6 +73,8 @@ impl<Gamepad: SerializableGamepad> SerializablePacket for Packet<Gamepad> {
   }
 }
 
+// rust-analyzer might throw errors below, but it's fine
+// see https://github.com/rust-lang/rust-analyzer/issues/17040
 include!("../../snippet/serialize.rs");
 
 #[cfg(test)]
@@ -80,6 +82,8 @@ mod tests {
   use super::*;
   use crate::gamepad::XButtons;
 
+  // rust-analyzer might throw errors below, but it's fine
+  // see https://github.com/rust-lang/rust-analyzer/issues/17040
   include!("../../snippet/deserialize.rs");
   include!("../../snippet/test_serialize_deserialize.rs");
 }
