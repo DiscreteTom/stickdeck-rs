@@ -20,7 +20,7 @@ pub fn spawn(server: &str, tx: mpsc::Sender<Packet<XGamepad>>) {
 
   thread::spawn(move || {
     let mut buf = [0; PACKET_FRAME_SIZE];
-    while let Ok(_) = stream.read_exact(&mut buf) {
+    while stream.read_exact(&mut buf).is_ok() {
       match Packet::deserialize(&buf) {
         Ok(packet) => {
           tx.send(packet)
