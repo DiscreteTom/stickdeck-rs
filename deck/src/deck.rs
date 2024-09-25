@@ -108,7 +108,7 @@ impl Application for App {
         .on_press(Message::Exit)
         .width(Length::Fill),
         column![
-          text(&format!(
+          text(format!(
             "Input Update Interval: {}ms",
             self.flags.config.input_update_interval_ms
           ))
@@ -135,7 +135,7 @@ impl Application for App {
         )
         .on_press(Message::StartServer)
         .width(Length::Fill),
-        text(&format!("stickdeck v{}", env!("CARGO_PKG_VERSION"))).size(20)
+        text(format!("stickdeck v{}", env!("CARGO_PKG_VERSION"))).size(20)
       ]
       .padding([40, 80])
       .into(),
@@ -148,7 +148,7 @@ impl Application for App {
         )
         .on_press(Message::Exit)
         .width(Length::Fill),
-        text(&format!(
+        text(format!(
           "=== [stickdeck v{}] Server is listening at {}:{} ===",
           env!("CARGO_PKG_VERSION"),
           self.local_ip,

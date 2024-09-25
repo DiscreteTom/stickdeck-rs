@@ -42,10 +42,11 @@ pub fn spawn(input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> {
         let handles = input.get_connected_controllers();
         if !handles.is_empty() {
           info!("num of input handles: {:?}", handles.len());
-          return Some(handles);
+          Some(handles)
+        } else {
+          info!("no input handles, retrying...");
+          None
         }
-        info!("no input handles, retrying...");
-        return None;
       }),
     );
 
@@ -128,7 +129,7 @@ pub fn spawn(input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> {
         });
 
         // only send data if client is connected
-        net_tx.as_ref().map(|tx| {
+        net_tx.as_ref().inspect(|tx| {
           let send_packet = |p: Packet<XGamepad>| {
             trace!("Send {:?}", p);
             tx.send(p).expect("Failed to send data");
@@ -149,7 +150,9 @@ pub fn spawn(input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> {
             last_mouse_button = mouse.buttons;
           }
         });
-        ui_str.map(|s| ui_tx.send(s).expect("Failed to send UI data"));
+        if let Some(s) = ui_str {
+          ui_tx.send(s).expect("Failed to send UI data")
+        }
       }),
     );
   });
@@ -199,9 +202,9 @@ fn update_input<Data: InputActionData>(
 {
   let data = action.update(input, *input_handle);
   if data.is_active() {
-    ui_str
-      .as_mut()
-      .map(|s| s.push_str(&format!("{}: {}\n", action.name, data.to_string())));
+    if let Some(s) = ui_str.as_mut() {
+      s.push_str(&format!("{}: {}\n", action.name, data.to_string()))
+    }
     cb(&data);
   }
 }
@@ -220,7 +223,7 @@ fn update_btn(
 
 /// Convert f32 `[-128, 127]` to u8 `[-128, 127]`
 fn crop_f32_to_i8(f: f32) -> i8 {
-  f.max(-128.0).min(127.0) as i8
+  f.clamp(-128.0, 127.0) as i8
 }
 
 /// Convert f32 `[0, 1]` to u8 `[0, 255]`
@@ -249,36 +252,63 @@ mod tests {
 
   #[test]
   fn test_gamepad_eq() {
-    let a = XGamepad::default();
-    let b = XGamepad::default();
-    assert!(gamepad_eq(&a, &b));
+    let default = XGamepad::default();
+    assert!(gamepad_eq(&XGamepad::default(), &default));
 
-    let mut a = XGamepad::default();
-    a.buttons.raw |= XButtons::UP;
-    assert!(!gamepad_eq(&a, &b));
+    assert!(!gamepad_eq(
+      &XGamepad {
+        buttons: XButtons { raw: XButtons::UP },
+        ..XGamepad::default()
+      },
+      &default
+    ));
 
-    let mut a = XGamepad::default();
-    a.left_trigger = 255;
-    assert!(!gamepad_eq(&a, &b));
+    assert!(!gamepad_eq(
+      &XGamepad {
+        left_trigger: 255,
+        ..XGamepad::default()
+      },
+      &default
+    ));
 
-    let mut a = XGamepad::default();
-    a.right_trigger = 255;
-    assert!(!gamepad_eq(&a, &b));
+    assert!(!gamepad_eq(
+      &XGamepad {
+        right_trigger: 255,
+        ..XGamepad::default()
+      },
+      &default
+    ));
 
-    let mut a = XGamepad::default();
-    a.thumb_lx = 32767;
-    assert!(!gamepad_eq(&a, &b));
+    assert!(!gamepad_eq(
+      &XGamepad {
+        thumb_lx: 32767,
+        ..XGamepad::default()
+      },
+      &default
+    ));
 
-    let mut a = XGamepad::default();
-    a.thumb_ly = 32767;
-    assert!(!gamepad_eq(&a, &b));
+    assert!(!gamepad_eq(
+      &XGamepad {
+        thumb_ly: 32767,
+        ..XGamepad::default()
+      },
+      &default
+    ));
 
-    let mut a = XGamepad::default();
-    a.thumb_rx = 32767;
-    assert!(!gamepad_eq(&a, &b));
+    assert!(!gamepad_eq(
+      &XGamepad {
+        thumb_rx: 32767,
+        ..XGamepad::default()
+      },
+      &default
+    ));
 
-    let mut a = XGamepad::default();
-    a.thumb_ry = 32767;
-    assert!(!gamepad_eq(&a, &b));
+    assert!(!gamepad_eq(
+      &XGamepad {
+        thumb_ry: 32767,
+        ..XGamepad::default()
+      },
+      &default
+    ));
   }
 }

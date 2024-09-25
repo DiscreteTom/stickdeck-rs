@@ -9,7 +9,8 @@ use std::{
 use stickdeck_common::{Packet, PACKET_FRAME_SIZE};
 
 pub fn spawn(addr: &str, connected_tx: mpsc::Sender<mpsc::Sender<Packet<XGamepad>>>) {
-  let listener = TcpListener::bind(addr).expect(&format!("Failed to bind to address {}", addr));
+  let listener =
+    TcpListener::bind(addr).unwrap_or_else(|_| panic!("Failed to bind to address {}", addr));
 
   info!("Server listening on {}", addr);
 
