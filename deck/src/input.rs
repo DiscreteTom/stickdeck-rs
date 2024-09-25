@@ -1,7 +1,10 @@
 mod action;
 mod xbox;
 
-use crate::gamepad::{XButtons, XGamepad};
+use crate::{
+  gamepad::{XButtons, XGamepad},
+  perf::perf,
+};
 use action::{InputAction, InputActionData, InputDigitalAction, UpdatableInputAction};
 use log::{info, trace};
 use std::{
@@ -134,7 +137,7 @@ pub fn spawn(input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> {
         net_tx.as_ref().inspect(|tx| {
           let send_packet = |p: Packet<XGamepad>| {
             trace!("Send {:?}", p);
-            tx.send(p).expect("Failed to send data");
+            perf!("net_tx.send", tx.send(p).expect("Failed to send data"), 10);
           };
 
           // gamepad changed
@@ -153,7 +156,11 @@ pub fn spawn(input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> {
           }
         });
         if let Some(s) = ui_str {
-          ui_tx.send(s.clone()).expect("Failed to send UI data")
+          perf!(
+            "ui_tx.send",
+            ui_tx.send(s.clone()).expect("Failed to send UI data"),
+            10
+          )
         }
       }),
     );
@@ -172,7 +179,7 @@ fn poll<R>(single: &SingleClient, interval_ms: u64, mut f: impl FnMut() -> Optio
     }
 
     thread::sleep(Duration::from_millis(interval_ms));
-    single.run_callbacks();
+    perf!("poll", single.run_callbacks(), 10);
   }
 }
 

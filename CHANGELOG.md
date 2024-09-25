@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## Next
+
+- Server (Steam Deck)
+  - Feat: add performance warning in debug mode.
+
 ## v0.3.0
 
 - **_Breaking Change_**: update network protocol and action set.

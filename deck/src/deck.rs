@@ -1,6 +1,7 @@
 mod config;
 mod gamepad;
 mod input;
+mod perf;
 mod server;
 mod utils;
 
@@ -14,6 +15,7 @@ use iced::{
 };
 use input::InputConfig;
 use local_ip_address::local_ip;
+use perf::perf;
 use std::{env, net::IpAddr, sync::mpsc};
 use tokio::sync::watch;
 
@@ -164,7 +166,11 @@ impl Application for App {
 
   fn subscription(&self) -> iced::Subscription<Self::Message> {
     unfold("ui update", self.ui_rx.clone(), move |mut rx| async move {
-      rx.changed().await.expect("ui content channel closed");
+      perf!(
+        "ui update",
+        rx.changed().await.expect("ui content channel closed"),
+        100
+      );
       let content = rx.borrow_and_update().clone();
       (Message::Update(content), rx)
     })
