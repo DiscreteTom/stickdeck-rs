@@ -136,7 +136,7 @@ pub fn spawn(input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> {
           };
 
           // gamepad changed
-          if !gamepad_eq(&gamepad, &last_gamepad) {
+          if gamepad != last_gamepad {
             send_packet(Packet::Gamepad(gamepad.clone()));
             last_gamepad = gamepad;
           }
@@ -234,81 +234,4 @@ fn scale_f32_to_u8(f: f32) -> u8 {
 /// Convert f32 `(-1, 1)` to i16 `[-32768, 32767]`
 fn scale_f32_to_i16(f: f32) -> i16 {
   (f * 32767.0) as i16
-}
-
-fn gamepad_eq(a: &XGamepad, b: &XGamepad) -> bool {
-  a.buttons.raw == b.buttons.raw
-    && a.left_trigger == b.left_trigger
-    && a.right_trigger == b.right_trigger
-    && a.thumb_lx == b.thumb_lx
-    && a.thumb_ly == b.thumb_ly
-    && a.thumb_rx == b.thumb_rx
-    && a.thumb_ry == b.thumb_ry
-}
-
-#[cfg(test)]
-mod tests {
-  use super::*;
-
-  #[test]
-  fn test_gamepad_eq() {
-    let default = XGamepad::default();
-    assert!(gamepad_eq(&XGamepad::default(), &default));
-
-    assert!(!gamepad_eq(
-      &XGamepad {
-        buttons: XButtons { raw: XButtons::UP },
-        ..XGamepad::default()
-      },
-      &default
-    ));
-
-    assert!(!gamepad_eq(
-      &XGamepad {
-        left_trigger: 255,
-        ..XGamepad::default()
-      },
-      &default
-    ));
-
-    assert!(!gamepad_eq(
-      &XGamepad {
-        right_trigger: 255,
-        ..XGamepad::default()
-      },
-      &default
-    ));
-
-    assert!(!gamepad_eq(
-      &XGamepad {
-        thumb_lx: 32767,
-        ..XGamepad::default()
-      },
-      &default
-    ));
-
-    assert!(!gamepad_eq(
-      &XGamepad {
-        thumb_ly: 32767,
-        ..XGamepad::default()
-      },
-      &default
-    ));
-
-    assert!(!gamepad_eq(
-      &XGamepad {
-        thumb_rx: 32767,
-        ..XGamepad::default()
-      },
-      &default
-    ));
-
-    assert!(!gamepad_eq(
-      &XGamepad {
-        thumb_ry: 32767,
-        ..XGamepad::default()
-      },
-      &default
-    ));
-  }
 }
