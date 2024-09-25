@@ -221,17 +221,17 @@ fn update_btn(
   });
 }
 
-/// Convert f32 `[-128, 127]` to u8 `[-128, 127]`
+/// Convert f32 `[-128, 127]` to i8 `[-128, 127]`
 fn crop_f32_to_i8(f: f32) -> i8 {
-  f.clamp(-128.0, 127.0) as i8
+  f.clamp(i8::MIN as f32, i8::MAX as f32) as i8
 }
 
 /// Convert f32 `[0, 1]` to u8 `[0, 255]`
 fn scale_f32_to_u8(f: f32) -> u8 {
-  (f * 255.0) as u8
+  (f * u8::MAX as f32) as u8
 }
 
 /// Convert f32 `(-1, 1)` to i16 `[-32768, 32767]`
 fn scale_f32_to_i16(f: f32) -> i16 {
-  (f * 32767.0) as i16
+  (f * i16::MAX as f32) as i16
 }
