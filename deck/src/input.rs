@@ -63,6 +63,7 @@ pub fn spawn(input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> {
     let mut last_gamepad = XGamepad::default();
     let mut last_mouse_button = MouseButton::default();
     let mut last_update = Instant::now();
+    let mut ui_str_buffer = String::new(); // prevent reallocation
 
     poll(
       &single,
@@ -76,7 +77,8 @@ pub fn spawn(input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> {
         // prepare ctx
         let mut ui_str = if last_update.elapsed().as_millis() > ui_update_interval_ms {
           last_update = Instant::now();
-          Some(String::new())
+          ui_str_buffer.clear();
+          Some(&mut ui_str_buffer) // re-use the buffer
         } else {
           None
         };
@@ -151,7 +153,7 @@ pub fn spawn(input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> {
           }
         });
         if let Some(s) = ui_str {
-          ui_tx.send(s).expect("Failed to send UI data")
+          ui_tx.send(s.clone()).expect("Failed to send UI data")
         }
       }),
     );
@@ -195,7 +197,11 @@ fn forever(mut f: impl FnMut()) -> impl FnMut() -> Option<()> {
 
 fn update_input<Data: InputActionData>(
   action: &InputAction<Data>,
-  (input, input_handle, ui_str): &mut (&Input<ClientManager>, InputHandle_t, &mut Option<String>),
+  (input, input_handle, ui_str): &mut (
+    &Input<ClientManager>,
+    InputHandle_t,
+    &mut Option<&mut String>,
+  ),
   mut cb: impl FnMut(&Data),
 ) where
   InputAction<Data>: UpdatableInputAction<Data>,
@@ -211,7 +217,11 @@ fn update_input<Data: InputActionData>(
 
 fn update_btn(
   action: &InputDigitalAction,
-  ctx: &mut (&Input<ClientManager>, InputHandle_t, &mut Option<String>),
+  ctx: &mut (
+    &Input<ClientManager>,
+    InputHandle_t,
+    &mut Option<&mut String>,
+  ),
   mut cb: impl FnMut(),
 ) {
   update_input(action, ctx, |data| {
