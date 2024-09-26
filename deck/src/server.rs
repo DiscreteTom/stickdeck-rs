@@ -1,4 +1,4 @@
-use crate::gamepad::XGamepad;
+use crate::{gamepad::XGamepad, perf::perf};
 use log::info;
 use std::{
   io::{self, Write},
@@ -34,7 +34,11 @@ pub fn spawn(addr: &str, connected_tx: mpsc::Sender<mpsc::Sender<Packet<XGamepad
 
     while let Ok(data) = data_rx.recv() {
       data.serialize(&mut buf);
-      if write_stream(&mut stream, &buf).is_err() {
+      if perf!(
+        "net write stream",
+        write_stream(&mut stream, &buf).is_err(),
+        10
+      ) {
         break;
       }
     }
