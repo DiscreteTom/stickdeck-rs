@@ -6,7 +6,7 @@ macro_rules! perf {
       let res = $e;
       let elapsed = start.elapsed();
       if elapsed > std::time::Duration::from_millis($threshold_ms) {
-        log::warn!("Performance warning({:?}): {:?}ms", $name, elapsed);
+        log::warn!("Performance warning({:?}): {:?}", $name, elapsed);
       }
       res
     } else {
