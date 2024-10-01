@@ -8,8 +8,7 @@ mod utils;
 use config::Config;
 use iced::{
   alignment::Horizontal,
-  executor,
-  subscription::unfold,
+  executor, time,
   widget::{button, column, slider, text, toggler},
   window, Application, Command, Element, Length, Settings, Theme,
 };
@@ -50,7 +49,7 @@ enum Message {
   SetDarkMode(bool),
   SetInputUpdateInterval(u64),
   StartServer,
-  Update(String),
+  Update,
   Exit,
 }
 
@@ -62,6 +61,7 @@ struct App {
   content: String,
   ui_tx: watch::Sender<String>,
   ui_rx: watch::Receiver<String>,
+  ui_update_interval_ms: u64,
 }
 
 impl Application for App {
@@ -81,6 +81,7 @@ impl Application for App {
         ui_tx,
         ui_rx,
         flags,
+        ui_update_interval_ms: 30,
       },
       window::maximize(true),
     )
@@ -165,15 +166,7 @@ impl Application for App {
   }
 
   fn subscription(&self) -> iced::Subscription<Self::Message> {
-    unfold("ui update", self.ui_rx.clone(), move |mut rx| async move {
-      perf!(
-        "ui update",
-        rx.changed().await.expect("ui content channel closed"),
-        100
-      );
-      let content = rx.borrow_and_update().clone();
-      (Message::Update(content), rx)
-    })
+    time::every(time::Duration::from_millis(self.ui_update_interval_ms)).map(|_| Message::Update)
   }
 
   fn update(&mut self, message: Self::Message) -> Command<Self::Message> {
@@ -198,14 +191,14 @@ impl Application for App {
             interval_ms: self.flags.config.input_update_interval_ms,
             ui_tx: self.ui_tx.clone(),
             connected_rx,
-            ui_update_interval_ms: 30,
+            ui_update_interval_ms: self.ui_update_interval_ms as u128,
           })
           .expect("Failed to send config to the input thread");
 
         self.state = State::Started;
       }
-      Message::Update(content) => {
-        self.content = content;
+      Message::Update => {
+        self.content = perf!("ui update", self.ui_rx.borrow().clone(), 100);
       }
       Message::Exit => {
         std::process::exit(0);
