@@ -8,7 +8,7 @@ use std::{
 };
 use stickdeck_common::{Packet, PACKET_FRAME_SIZE};
 
-pub fn spawn(addr: &str, connected_tx: mpsc::Sender<mpsc::Sender<Packet<XGamepad>>>) {
+pub fn spawn(addr: &str, connected_tx: mpsc::Sender<mpsc::SyncSender<Packet<XGamepad>>>) {
   let listener =
     TcpListener::bind(addr).unwrap_or_else(|_| panic!("Failed to bind to address {}", addr));
 
@@ -24,7 +24,8 @@ pub fn spawn(addr: &str, connected_tx: mpsc::Sender<mpsc::Sender<Packet<XGamepad
     stream.set_nodelay(true).expect("Failed to set nodelay");
     info!("New client connected");
 
-    let (data_tx, data_rx) = mpsc::channel();
+    // use a bounded channel to prevent network buffer from growing too large
+    let (data_tx, data_rx) = mpsc::sync_channel(8);
 
     connected_tx
       .send(data_tx)

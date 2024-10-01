@@ -21,7 +21,7 @@ use xbox::XBoxControls;
 pub struct InputConfig {
   pub interval_ms: u64,
   pub ui_tx: watch::Sender<String>,
-  pub connected_rx: mpsc::Receiver<mpsc::Sender<Packet<XGamepad>>>,
+  pub connected_rx: mpsc::Receiver<mpsc::SyncSender<Packet<XGamepad>>>,
   pub ui_update_interval_ms: u128,
 }
 
