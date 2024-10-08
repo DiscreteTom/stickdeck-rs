@@ -3,7 +3,7 @@ use std::{io::Read, net::TcpStream, sync::mpsc, thread};
 use stickdeck_common::{Mouse, Packet, PACKET_FRAME_SIZE};
 use vigem_client::{XButtons, XGamepad};
 
-pub fn spawn(server: &str, tx: mpsc::Sender<Packet<XGamepad>>) {
+pub fn spawn(server: &str, tx: mpsc::SyncSender<Packet<XGamepad>>) {
   info!("Connecting to {} ...", server);
   let mut retry = 3;
   let mut stream = loop {

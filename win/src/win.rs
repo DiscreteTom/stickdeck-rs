@@ -19,7 +19,7 @@ fn main() {
   info!("stickdeck-win v{}", env!("CARGO_PKG_VERSION"));
   info!("See https://github.com/DiscreteTom/stickdeck-rs for more info.");
 
-  let (gamepad_tx, gamepad_rx) = mpsc::channel();
+  let (gamepad_tx, gamepad_rx) = mpsc::sync_channel(8);
 
   // connect to the server
   client::spawn(
