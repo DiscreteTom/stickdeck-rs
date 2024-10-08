@@ -1,4 +1,5 @@
 /// Check if the expression takes too long to execute in debug mode.
+#[macro_export]
 macro_rules! perf {
   ($name:expr, $e:expr, $threshold_ms:expr) => {
     if log::log_enabled!(log::Level::Debug) {
@@ -14,4 +15,3 @@ macro_rules! perf {
     }
   };
 }
-pub(crate) use perf;

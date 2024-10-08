@@ -1,4 +1,4 @@
-use crate::{gamepad::XGamepad, perf::perf};
+use crate::gamepad::XGamepad;
 use log::info;
 use std::{
   io::{self, Write},
@@ -6,7 +6,7 @@ use std::{
   sync::mpsc,
   thread,
 };
-use stickdeck_common::{Packet, PACKET_FRAME_SIZE};
+use stickdeck_common::{perf, Packet, PACKET_FRAME_SIZE};
 
 pub fn spawn(addr: &str, connected_tx: mpsc::Sender<mpsc::SyncSender<Packet<XGamepad>>>) {
   let listener =

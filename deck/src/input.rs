@@ -1,10 +1,7 @@
 mod action;
 mod xbox;
 
-use crate::{
-  gamepad::{XButtons, XGamepad},
-  perf::perf,
-};
+use crate::gamepad::{XButtons, XGamepad};
 use action::{InputAction, InputActionData, InputDigitalAction, UpdatableInputAction};
 use log::{info, trace};
 use std::{
@@ -14,7 +11,7 @@ use std::{
 };
 use steamworks::{Client, ClientManager, Input, SResult, SingleClient};
 use steamworks_sys::InputHandle_t;
-use stickdeck_common::{Mouse, MouseButton, Packet};
+use stickdeck_common::{perf, Mouse, MouseButton, Packet};
 use tokio::sync::watch;
 use xbox::XBoxControls;
 

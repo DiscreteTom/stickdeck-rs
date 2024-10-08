@@ -1,7 +1,6 @@
 mod config;
 mod gamepad;
 mod input;
-mod perf;
 mod server;
 mod utils;
 
@@ -14,8 +13,8 @@ use iced::{
 };
 use input::InputConfig;
 use local_ip_address::local_ip;
-use perf::perf;
 use std::{env, net::IpAddr, sync::mpsc};
+use stickdeck_common::perf;
 use tokio::sync::watch;
 
 fn main() {

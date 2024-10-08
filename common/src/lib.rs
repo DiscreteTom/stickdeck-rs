@@ -1,3 +1,5 @@
+mod perf;
+
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq)]
 pub struct MouseButton(pub u8);
 
