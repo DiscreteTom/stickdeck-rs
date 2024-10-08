@@ -36,7 +36,7 @@ fn main() {
 
   let mut now = Instant::now();
   let mut count = 0;
-  while let Ok(data) = perf!("gamepad_rx.recv", gamepad_rx.recv(), 100) {
+  while let Ok(data) = gamepad_rx.recv() {
     trace!("Got {:?}", data);
 
     match data {
