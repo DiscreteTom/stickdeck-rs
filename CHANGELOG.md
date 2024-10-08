@@ -2,6 +2,8 @@
 
 ## Next
 
+- Client (PC)
+  - Feat: add performance warning in debug log level.
 - Server (Steam Deck)
   - Feat: add performance warning in debug log level.
 

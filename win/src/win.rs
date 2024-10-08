@@ -2,7 +2,7 @@ mod client;
 
 use log::{debug, info, log_enabled, trace, Level};
 use std::{env, sync::mpsc, time::Instant};
-use stickdeck_common::{Mouse, MouseButton, Packet};
+use stickdeck_common::{perf, Mouse, MouseButton, Packet};
 use vigem_client::{Client, TargetId, XGamepad, Xbox360Wired};
 use windows::Win32::UI::Input::KeyboardAndMouse::{
   SendInput, INPUT, INPUT_0, INPUT_MOUSE, MOUSEEVENTF_LEFTDOWN, MOUSEEVENTF_LEFTUP,
@@ -36,13 +36,13 @@ fn main() {
 
   let mut now = Instant::now();
   let mut count = 0;
-  while let Ok(data) = gamepad_rx.recv() {
+  while let Ok(data) = perf!("gamepad_rx.recv", gamepad_rx.recv(), 100) {
     trace!("Got {:?}", data);
 
     match data {
       Packet::Timestamp(_timestamp) => {} // TODO
-      Packet::Gamepad(gamepad) => update_controller(&gamepad),
-      Packet::Mouse(data) => move_mouse(&data),
+      Packet::Gamepad(gamepad) => perf!("update controller", update_controller(&gamepad), 10),
+      Packet::Mouse(data) => perf!("move mouse", move_mouse(&data), 10),
     }
 
     if log_enabled!(Level::Debug) {
