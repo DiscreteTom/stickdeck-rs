@@ -6,6 +6,7 @@
   - Feat: add performance warning in debug log level.
 - Server (Steam Deck)
   - Feat: add performance warning in debug log level.
+  - Feat: less unnecessary logs in debug mode.
 
 ## v0.3.0
 
