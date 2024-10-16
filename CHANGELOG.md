@@ -7,6 +7,7 @@
 - Server (Steam Deck)
   - Feat: add performance warning in debug log level.
   - Feat: less unnecessary logs in debug mode.
+  - Fix: add a toggle to disable debug info to prevent memory leak.
 
 ## v0.3.0
 

@@ -46,6 +46,7 @@ enum State {
 #[derive(Debug, Clone)]
 enum Message {
   SetDarkMode(bool),
+  SetDebugMode(bool),
   SetInputUpdateInterval(u64),
   StartServer,
   Update,
@@ -61,6 +62,7 @@ struct App {
   ui_tx: watch::Sender<String>,
   ui_rx: watch::Receiver<String>,
   ui_update_interval_ms: u64,
+  debug: bool,
 }
 
 impl Application for App {
@@ -80,6 +82,7 @@ impl Application for App {
         ui_tx,
         ui_rx,
         flags,
+        debug: false,
         ui_update_interval_ms: 30,
       },
       window::maximize(true),
@@ -150,6 +153,13 @@ impl Application for App {
         )
         .on_press(Message::Exit)
         .width(Length::Fill),
+        toggler(
+          Some("Show Debug Info (will leak memory)".into()),
+          self.debug,
+          |v| { Message::SetDebugMode(v) }
+        )
+        .size(40)
+        .text_size(40),
         text(format!(
           "=== [stickdeck v{}] Server is listening at {}:{} ===",
           env!("CARGO_PKG_VERSION"),
@@ -157,7 +167,8 @@ impl Application for App {
           self.port
         ))
         .size(20),
-        text(&self.content).size(16)
+        // TODO: show content will cause memory leak, fix it
+        text(if self.debug { &self.content } else { "" }).size(16)
       ]
       .padding([40, 80])
       .into(),
@@ -173,6 +184,9 @@ impl Application for App {
       Message::SetDarkMode(dark) => {
         self.flags.config.dark = dark;
         self.flags.config.save();
+      }
+      Message::SetDebugMode(debug) => {
+        self.debug = debug;
       }
       Message::SetInputUpdateInterval(interval) => {
         self.flags.config.input_update_interval_ms = interval;
