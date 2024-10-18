@@ -2381,7 +2381,7 @@ checksum = "dee9311cd52318d225220e3f52414958fbac21b75541a6543d33fbdda68797b6"
 
 [[package]]
 name = "stickdeck"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "env_logger",
  "iced",

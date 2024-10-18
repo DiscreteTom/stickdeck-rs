@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## Next
+## v0.3.1
 
 - Client (PC)
   - Feat: add performance warning in debug log level.
