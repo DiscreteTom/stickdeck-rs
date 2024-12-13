@@ -30,11 +30,6 @@ fn main() {
     .unwrap();
 }
 
-struct Flags {
-  input_config_tx: mpsc::Sender<InputConfig>,
-  config: Config,
-}
-
 enum State {
   Home,
   Started,
@@ -51,7 +46,8 @@ enum Message {
 }
 
 struct App {
-  flags: Flags,
+  input_config_tx: mpsc::Sender<InputConfig>,
+  config: Config,
   local_ip: IpAddr,
   port: u16,
   state: State,
@@ -66,7 +62,9 @@ impl Default for App {
   fn default() -> Self {
     let (input_config_tx, input_config_rx) = mpsc::channel();
     input::spawn(input_config_rx).expect("Failed to spawn the input thread");
+
     let (ui_tx, ui_rx) = watch::channel("".to_string());
+
     App {
       local_ip: local_ip().expect("Failed to get local ip address"),
       port: 7777,
@@ -74,10 +72,8 @@ impl Default for App {
       content: "".into(),
       ui_tx,
       ui_rx,
-      flags: Flags {
-        input_config_tx,
-        config: Config::init(),
-      },
+      input_config_tx,
+      config: Config::init(),
       debug: false,
       ui_update_interval_ms: 30,
     }
@@ -86,7 +82,7 @@ impl Default for App {
 
 impl App {
   fn theme(&self) -> Theme {
-    if self.flags.config.dark {
+    if self.config.dark {
       Theme::Dark
     } else {
       Theme::Light
@@ -107,17 +103,17 @@ impl App {
         column![
           text(format!(
             "Input Update Interval: {}ms",
-            self.flags.config.input_update_interval_ms
+            self.config.input_update_interval_ms
           ))
           .size(20),
           slider(
             1.0..=50.0,
-            self.flags.config.input_update_interval_ms as f64,
+            self.config.input_update_interval_ms as f64,
             |v| { Message::SetInputUpdateInterval(v as u64) }
           )
           .height(40)
           .step(1.0),
-          toggler(self.flags.config.dark,)
+          toggler(self.config.dark,)
             .label("Dark Mode")
             .on_toggle(|v| { Message::SetDarkMode(v) })
             .size(40)
@@ -172,15 +168,15 @@ impl App {
   fn update(&mut self, message: Message) {
     match message {
       Message::SetDarkMode(dark) => {
-        self.flags.config.dark = dark;
-        self.flags.config.save();
+        self.config.dark = dark;
+        self.config.save();
       }
       Message::SetDebugMode(debug) => {
         self.debug = debug;
       }
       Message::SetInputUpdateInterval(interval) => {
-        self.flags.config.input_update_interval_ms = interval;
-        self.flags.config.save();
+        self.config.input_update_interval_ms = interval;
+        self.config.save();
       }
       Message::StartServer => {
         let (connected_tx, connected_rx) = mpsc::channel();
@@ -188,10 +184,9 @@ impl App {
         server::spawn(&format!("{}:{}", self.local_ip, self.port), connected_tx);
 
         self
-          .flags
           .input_config_tx
           .send(InputConfig {
-            interval_ms: self.flags.config.input_update_interval_ms,
+            interval_ms: self.config.input_update_interval_ms,
             ui_tx: self.ui_tx.clone(),
             connected_rx,
             ui_update_interval_ms: self.ui_update_interval_ms as u128,
