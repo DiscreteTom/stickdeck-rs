@@ -7,9 +7,9 @@ mod utils;
 use config::Config;
 use iced::{
   alignment::Horizontal,
-  executor, time,
+  time,
   widget::{button, column, slider, text, toggler},
-  window, Application, Command, Element, Length, Settings, Theme,
+  Element, Length, Theme,
 };
 use input::InputConfig;
 use local_ip_address::local_ip;
@@ -23,14 +23,11 @@ fn main() {
   }
   env_logger::init();
 
-  let (input_config_tx, input_config_rx) = mpsc::channel();
-  input::spawn(input_config_rx).expect("Failed to spawn the input thread");
-
-  App::run(Settings::with_flags(Flags {
-    input_config_tx,
-    config: Config::init(),
-  }))
-  .expect("Failed to run the app");
+  iced::application("StickDeck", App::update, App::view)
+    .theme(App::theme)
+    .subscription(App::subscription)
+    .run()
+    .unwrap();
 }
 
 struct Flags {
@@ -65,35 +62,30 @@ struct App {
   debug: bool,
 }
 
-impl Application for App {
-  type Executor = executor::Default;
-  type Flags = Flags;
-  type Message = Message;
-  type Theme = Theme;
-
-  fn new(flags: Self::Flags) -> (App, Command<Self::Message>) {
+impl Default for App {
+  fn default() -> Self {
+    let (input_config_tx, input_config_rx) = mpsc::channel();
+    input::spawn(input_config_rx).expect("Failed to spawn the input thread");
     let (ui_tx, ui_rx) = watch::channel("".to_string());
-    (
-      App {
-        local_ip: local_ip().expect("Failed to get local ip address"),
-        port: 7777,
-        state: State::Home,
-        content: "".into(),
-        ui_tx,
-        ui_rx,
-        flags,
-        debug: false,
-        ui_update_interval_ms: 30,
+    App {
+      local_ip: local_ip().expect("Failed to get local ip address"),
+      port: 7777,
+      state: State::Home,
+      content: "".into(),
+      ui_tx,
+      ui_rx,
+      flags: Flags {
+        input_config_tx,
+        config: Config::init(),
       },
-      window::maximize(true),
-    )
+      debug: false,
+      ui_update_interval_ms: 30,
+    }
   }
+}
 
-  fn title(&self) -> String {
-    "StickDeck".into()
-  }
-
-  fn theme(&self) -> Self::Theme {
+impl App {
+  fn theme(&self) -> Theme {
     if self.flags.config.dark {
       Theme::Dark
     } else {
@@ -107,7 +99,7 @@ impl Application for App {
         button(
           text("Exit")
             .size(30)
-            .horizontal_alignment(Horizontal::Center)
+            .align_x(Horizontal::Center)
             .width(Length::Fill)
         )
         .on_press(Message::Exit)
@@ -125,17 +117,17 @@ impl Application for App {
           )
           .height(40)
           .step(1.0),
-          toggler(Some("Dark Mode".into()), self.flags.config.dark, |v| {
-            Message::SetDarkMode(v)
-          })
-          .size(40)
-          .text_size(40)
+          toggler(self.flags.config.dark,)
+            .label("Dark Mode")
+            .on_toggle(|v| { Message::SetDarkMode(v) })
+            .size(40)
+            .text_size(40)
         ]
         .padding([16, 0]),
         button(
           text("Start Server")
             .size(30)
-            .horizontal_alignment(Horizontal::Center)
+            .align_x(Horizontal::Center)
             .width(Length::Fill)
         )
         .on_press(Message::StartServer)
@@ -148,18 +140,16 @@ impl Application for App {
         button(
           text("Exit")
             .size(30)
-            .horizontal_alignment(Horizontal::Center)
+            .align_x(Horizontal::Center)
             .width(Length::Fill)
         )
         .on_press(Message::Exit)
         .width(Length::Fill),
-        toggler(
-          Some("Show Debug Info (will leak memory)".into()),
-          self.debug,
-          |v| { Message::SetDebugMode(v) }
-        )
-        .size(40)
-        .text_size(40),
+        toggler(self.debug,)
+          .label("Show Debug Info (will leak memory)")
+          .on_toggle(|v| { Message::SetDebugMode(v) })
+          .size(40)
+          .text_size(40),
         text(format!(
           "=== [stickdeck v{}] Server is listening at {}:{} ===",
           env!("CARGO_PKG_VERSION"),
@@ -175,11 +165,11 @@ impl Application for App {
     }
   }
 
-  fn subscription(&self) -> iced::Subscription<Self::Message> {
+  fn subscription(&self) -> iced::Subscription<Message> {
     time::every(time::Duration::from_millis(self.ui_update_interval_ms)).map(|_| Message::Update)
   }
 
-  fn update(&mut self, message: Self::Message) -> Command<Self::Message> {
+  fn update(&mut self, message: Message) {
     match message {
       Message::SetDarkMode(dark) => {
         self.flags.config.dark = dark;
@@ -217,7 +207,5 @@ impl Application for App {
         std::process::exit(0);
       }
     }
-
-    Command::none()
   }
 }
