@@ -3,6 +3,7 @@
 ## v0.3.2
 
 - Server (Steam Deck)
+  - Feat: add memory leak detector.
   - Fix: fix memory leak, remove debug info toggle.
 
 ## v0.3.1

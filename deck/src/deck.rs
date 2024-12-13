@@ -13,8 +13,10 @@ use iced::{
 };
 use input::InputConfig;
 use local_ip_address::local_ip;
-use std::{env, net::IpAddr, sync::mpsc};
+use log::warn;
+use std::{env, net::IpAddr, sync::mpsc, thread};
 use stickdeck_common::perf;
+use sysinfo::System;
 use tokio::sync::watch;
 
 fn main() {
@@ -22,6 +24,23 @@ fn main() {
     env::set_var("RUST_LOG", "info")
   }
   env_logger::init();
+
+  // detect potential memory leak
+  thread::spawn(|| {
+    let sys = System::new_all();
+    let total_memory = sys.total_memory() as f64;
+    let initial_usage = sys.used_memory() as f64 / total_memory * 100.0;
+    loop {
+      thread::sleep(time::Duration::from_secs(60));
+      let current_usage = System::new_all().used_memory() as f64 / total_memory * 100.0;
+      if current_usage - initial_usage > 20.0 {
+        warn!(
+          "Potential memory leak detected: usage increased from {:.2}% to {:.2}%",
+          initial_usage, current_usage
+        );
+      }
+    }
+  });
 
   iced::application("StickDeck", App::update, App::view)
     .theme(App::theme)
