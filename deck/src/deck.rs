@@ -9,7 +9,7 @@ use iced::{
   alignment::Horizontal,
   time,
   widget::{button, column, slider, text, toggler},
-  Element, Length, Theme,
+  window, Element, Length, Theme,
 };
 use input::InputConfig;
 use local_ip_address::local_ip;
@@ -45,7 +45,27 @@ fn main() {
   iced::application("StickDeck", App::update, App::view)
     .theme(App::theme)
     .subscription(App::subscription)
-    .run()
+    .run_with(|| {
+      let (input_config_tx, input_config_rx) = mpsc::channel();
+      input::spawn(input_config_rx).expect("Failed to spawn the input thread");
+
+      let (ui_tx, ui_rx) = watch::channel("".to_string());
+
+      (
+        App {
+          local_ip: local_ip().expect("Failed to get local ip address"),
+          port: 7777,
+          state: State::Home,
+          content: "".into(),
+          ui_tx,
+          ui_rx,
+          input_config_tx,
+          config: Config::init(),
+          ui_update_interval_ms: 30,
+        },
+        window::get_oldest().then(|id| window::maximize(id.unwrap(), true)),
+      )
+    })
     .unwrap();
 }
 
@@ -73,27 +93,6 @@ struct App {
   ui_tx: watch::Sender<String>,
   ui_rx: watch::Receiver<String>,
   ui_update_interval_ms: u64,
-}
-
-impl Default for App {
-  fn default() -> Self {
-    let (input_config_tx, input_config_rx) = mpsc::channel();
-    input::spawn(input_config_rx).expect("Failed to spawn the input thread");
-
-    let (ui_tx, ui_rx) = watch::channel("".to_string());
-
-    App {
-      local_ip: local_ip().expect("Failed to get local ip address"),
-      port: 7777,
-      state: State::Home,
-      content: "".into(),
-      ui_tx,
-      ui_rx,
-      input_config_tx,
-      config: Config::init(),
-      ui_update_interval_ms: 30,
-    }
-  }
 }
 
 impl App {
