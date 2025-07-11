@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## v0.3.2 (Unreleased)
+
+- **New**: Linux client support
+  - Feat: add native Linux client using uinput for virtual controller emulation
+  - Feat: support for all Xbox 360 controller features (buttons, analog sticks, triggers, D-pad)
+  - Feat: mouse input support on Linux
+  - Feat: setup, launch, and debug scripts for Linux
+  - Feat: GitHub Actions CI/CD for Linux builds
+  - Note: requires `/dev/uinput` access (run with sudo or add user to `input` group)
+
 ## v0.3.1
 
 - Client (PC)

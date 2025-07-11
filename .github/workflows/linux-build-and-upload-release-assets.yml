@@ -1,0 +1,44 @@
+name: Linux Build and Upload Release Assets
+
+on:
+  release:
+    types: [created]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+
+      - name: Build Linux Client
+        run: |
+          cd linux
+          cargo build --release
+
+      - name: Create release archive
+        run: |
+          cd linux
+          mkdir -p stickdeck-linux
+          cp target/release/stickdeck-linux stickdeck-linux/
+          cp -r scripts stickdeck-linux/
+          tar -czf stickdeck-linux-x86_64.tar.gz stickdeck-linux
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: linux/stickdeck-linux-x86_64.tar.gz
+          asset_name: stickdeck-linux-x86_64.tar.gz
+          asset_content_type: application/gzip

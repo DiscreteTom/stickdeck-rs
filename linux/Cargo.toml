@@ -1,0 +1,27 @@
+[package]
+name = "stickdeck-linux"
+version = "0.3.1"
+edition = "2021"
+
+[lib]
+name = "stickdeck_linux"
+path = "src/lib.rs"
+
+[[bin]]
+name = "stickdeck-linux"
+path = "src/main.rs"
+
+[dependencies]
+stickdeck-common = { path = "../common" }
+input-linux = "0.7"
+anyhow = "1"
+env_logger = "0.11"
+log = "0.4"
+
+[profile.dev]
+opt-level = 2
+
+[profile.release]
+lto = true
+codegen-units = 1
+opt-level = 3

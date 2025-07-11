@@ -38,8 +38,16 @@ Now you can proceed to the [client side setup](#client-side-pc). -->
 
 ### Client Side (PC)
 
+#### Windows
+
 1. Install [ViGEm Bus Driver](https://github.com/nefarius/ViGEmBus) and **_restart_** your PC.
 2. Download `stickdeck-win-vX.X.X.zip` from the [latest release](https://github.com/DiscreteTom/stickdeck-rs/releases/latest) and extract it.
+
+#### Linux
+
+1. Download `stickdeck-linux-x86_64.tar.gz` from the [latest release](https://github.com/DiscreteTom/stickdeck-rs/releases/latest) and extract it.
+2. Run `./scripts/setup.sh` in the extracted folder to install dependencies and configure permissions.
+3. Logout and login again if you were added to the `input` group during setup.
 
 ## Usage
 
@@ -48,12 +56,17 @@ Now you can proceed to the [client side setup](#client-side-pc). -->
 1. Start the server on Steam Deck. Make sure the server is running and the input is captured.
 2. Make sure your PC and your Steam Deck are in the same network.
 3. Make sure the client on your PC is under the same minor version as the server on Steam Deck.
-4. Run `launch.bat` on your PC. Once you see `Virtual controller is ready` in the console, StickDeck is ready.
-5. (Optional) If you want to test the controller, run `joy.cpl` (which is a built-in Windows joystick test tool).
+4. Run the client on your PC:
+   - **Windows**: Run `launch.bat`. Once you see `Virtual controller is ready` in the console, StickDeck is ready.
+   - **Linux**: Run `./scripts/launch.sh <steam_deck_ip>`. Once you see `Ready! Waiting for inputs from Steam Deck...`, StickDeck is ready.
+5. (Optional) Test the controller:
+   - **Windows**: Run `joy.cpl` (built-in Windows joystick test tool).
+   - **Linux**: Run `evtest` or `jstest-gtk` to test the virtual controller.
 
 > [!NOTE]
-> By default the client will try to connect `steamdeck:7777`. If you want to connect to a different server, you can edit `launch.bat`, replace the `steamdeck` with your server IP.
-> You can find the server IP on the first line of the StickDeck UI window while the server is started.
+> - **Windows**: By default the client will try to connect `steamdeck:7777`. If you want to connect to a different server, you can edit `launch.bat`, replace the `steamdeck` with your server IP.
+> - **Linux**: You need to provide the Steam Deck IP address as an argument to the launch script.
+> - You can find the server IP on the first line of the StickDeck UI window while the server is started.
 
 ### Mouse Actions
 
@@ -65,7 +78,14 @@ and map any action to mouse buttons.
 - Poll/update rate?
   - Depends on the configurable input update interval. In my case, set the input update interval to 3ms to reach the max update rate of 250+Hz.
   - Besides, the server side will only send the input when there is a change, so the actual update rate will be lower than the configured rate.
-  - You can checkout the actual update rate on the PC side by running `debug.bat`.
+  - You can checkout the actual update rate on the PC side by running:
+    - **Windows**: `debug.bat`
+    - **Linux**: `./scripts/debug.sh <steam_deck_ip>`
+
+- Linux client requirements?
+  - Requires access to `/dev/uinput` for creating virtual input devices.
+  - Either run with `sudo` or add your user to the `input` group: `sudo usermod -aG input $USER`
+  - The `setup.sh` script will help configure this automatically.
 
 ## Credit
 
