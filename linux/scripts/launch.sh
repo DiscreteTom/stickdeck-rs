@@ -36,4 +36,4 @@ fi
 
 echo "Starting StickDeck Linux client..."
 echo "Connecting to server at $SERVER_IP"
-cd .. && ./target/release/stickdeck-linux "$SERVER_IP"
+./target/release/stickdeck-linux "$SERVER_IP"

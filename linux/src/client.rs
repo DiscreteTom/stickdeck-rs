@@ -40,8 +40,9 @@ impl Client {
 	}
 
 	fn connect_and_receive(&self) -> std::io::Result<()> {
+		info!("Attempting to connect to {}...", self.server_addr);
 		let mut stream = TcpStream::connect(&self.server_addr)?;
-		info!("Connected to {}", self.server_addr);
+		info!("Successfully connected to {}", self.server_addr);
 
 		let mut buf = [0; PACKET_FRAME_SIZE];
 		while stream.read_exact(&mut buf).is_ok() {

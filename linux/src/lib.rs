@@ -25,6 +25,16 @@ pub fn main() -> Result<()> {
 	}
 
 	let server_ip = &args[1];
+	
+	// Check if user accidentally included port in IP
+	if server_ip.contains(':') {
+		eprintln!("Error: Please provide only the IP address, not IP:port");
+		eprintln!("The port {} will be added automatically", PORT);
+		eprintln!("Usage: {} <server_ip>", args[0]);
+		eprintln!("Example: {} 192.168.1.100", args[0]);
+		std::process::exit(1);
+	}
+	
 	let server_addr = format!("{}:{}", server_ip, PORT);
 
 	info!("StickDeck Linux Client starting...");

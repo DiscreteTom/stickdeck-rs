@@ -75,7 +75,7 @@ fi
 # Build the client
 echo ""
 echo "Building StickDeck Linux client..."
-cd .. && cargo build --release
+cargo build --release
 if [ $? -eq 0 ]; then
     echo "✓ Build successful!"
 else
