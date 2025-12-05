@@ -8,6 +8,7 @@ name = "stickdeck"
 path = "src/deck.rs"
 
 [dependencies]
+clap = { version = "4.5", features = ["cargo"] }
 steamworks-sys = "0.10.0"
 steamworks = "0.10.0"
 iced = { version = "0.10", features = ["tokio"] }
