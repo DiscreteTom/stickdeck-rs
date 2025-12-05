@@ -1,5 +1,6 @@
 mod client;
 
+use clap::Parser;
 use log::{debug, info, log_enabled, trace, Level};
 use std::{env, sync::mpsc, time::Instant};
 use stickdeck_common::{perf, Mouse, MouseButton, Packet};
@@ -10,11 +11,22 @@ use windows::Win32::UI::Input::KeyboardAndMouse::{
   MOUSE_EVENT_FLAGS,
 };
 
+/// Turn your Steam Deck into a joystick for your PC, with trackpad and gyro support!
+#[derive(Parser, Debug)]
+#[command(version, about, long_about = None)]
+struct Args {
+  /// Server address to connect to
+  #[arg(default_value = "steamdeck")]
+  server: String,
+}
+
 fn main() {
   if env::var("RUST_LOG").is_err() {
     env::set_var("RUST_LOG", "info")
   }
   env_logger::init();
+
+  let args = Args::parse();
 
   info!("stickdeck-win v{}", env!("CARGO_PKG_VERSION"));
   info!("See https://github.com/DiscreteTom/stickdeck-rs for more info.");
@@ -22,14 +34,7 @@ fn main() {
   let (gamepad_tx, gamepad_rx) = mpsc::sync_channel(8);
 
   // connect to the server
-  client::spawn(
-    &format!(
-      "{}:{}",
-      env::args().nth(1).unwrap_or("steamdeck".to_string()),
-      7777
-    ),
-    gamepad_tx,
-  );
+  client::spawn(&format!("{}:{}", args.server, 7777), gamepad_tx);
 
   let mut update_controller = init_controller();
   let mut move_mouse = init_mouse();
