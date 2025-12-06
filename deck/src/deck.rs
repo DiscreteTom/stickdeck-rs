@@ -4,6 +4,7 @@ mod input;
 mod server;
 mod utils;
 
+use clap::Parser;
 use config::Config;
 use iced::{
   alignment::Horizontal,
@@ -17,7 +18,13 @@ use std::{env, net::IpAddr, sync::mpsc};
 use stickdeck_common::perf;
 use tokio::sync::watch;
 
+/// Turn your Steam Deck into a joystick for your PC, with trackpad and gyro support!
+#[derive(Parser, Debug)]
+#[command(version, about, long_about = None)]
+struct Args {}
+
 fn main() {
+  let _args = Args::parse();
   if env::var("RUST_LOG").is_err() {
     env::set_var("RUST_LOG", "info")
   }
