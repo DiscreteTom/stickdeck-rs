@@ -85,5 +85,7 @@ impl<Gamepad: SerializableGamepad> SerializablePacket for Packet<Gamepad> {
 mod tests {
   use super::*;
 
-  stickdeck_common::impl_gamepad_tests! {XGamepad, XButtons}
+  // Compose macros for deserialization and testing
+  stickdeck_common::impl_deserializable_gamepad!(XGamepad, XButtons);
+  stickdeck_common::impl_test_serialize_deserialize!(XGamepad, XButtons);
 }

@@ -68,6 +68,8 @@ stickdeck_common::impl_deserializable_gamepad!(XGamepad, XButtons);
 mod tests {
   use super::*;
 
-  // Use combined macro to implement SerializableGamepad trait and tests
-  stickdeck_common::impl_client_gamepad_tests!(XGamepad, XButtons);
+  // Compose macros for serialization, deserialization, and testing
+  stickdeck_common::impl_serializable_gamepad!(XGamepad);
+  stickdeck_common::impl_deserializable_gamepad!(XGamepad, XButtons);
+  stickdeck_common::impl_test_serialize_deserialize!(XGamepad, XButtons);
 }
