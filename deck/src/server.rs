@@ -9,7 +9,7 @@ use std::{
 use stickdeck_common::{perf, Packet, PACKET_FRAME_SIZE};
 
 // Use macro to implement SerializableGamepad trait for production code
-stickdeck_common::impl_serializable_gamepad!(XGamepad, XButtons);
+stickdeck_common::impl_serializable_gamepad!(XGamepad);
 
 pub fn spawn(addr: &str, connected_tx: mpsc::Sender<mpsc::SyncSender<Packet<XGamepad>>>) {
   let listener =
