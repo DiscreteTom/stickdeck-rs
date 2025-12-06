@@ -1,4 +1,4 @@
-use crate::gamepad::XGamepad;
+use crate::gamepad::{XButtons, XGamepad};
 use log::info;
 use std::{
   io::{self, Write},
@@ -7,6 +7,9 @@ use std::{
   thread,
 };
 use stickdeck_common::{perf, Packet, PACKET_FRAME_SIZE};
+
+// Use macro to implement SerializableGamepad trait for production code
+stickdeck_common::impl_serializable_gamepad!(XGamepad, XButtons);
 
 pub fn spawn(addr: &str, connected_tx: mpsc::Sender<mpsc::SyncSender<Packet<XGamepad>>>) {
   let listener =
@@ -78,17 +81,9 @@ impl<Gamepad: SerializableGamepad> SerializablePacket for Packet<Gamepad> {
   }
 }
 
-// rust-analyzer might throw errors below, but it's fine
-// see https://github.com/rust-lang/rust-analyzer/issues/17040
-include!("../../snippet/serialize.rs");
-
 #[cfg(test)]
 mod tests {
   use super::*;
-  use crate::gamepad::XButtons;
 
-  // rust-analyzer might throw errors below, but it's fine
-  // see https://github.com/rust-lang/rust-analyzer/issues/17040
-  include!("../../snippet/deserialize.rs");
-  include!("../../snippet/test_serialize_deserialize.rs");
+  stickdeck_common::impl_gamepad_tests! {XGamepad, XButtons}
 }

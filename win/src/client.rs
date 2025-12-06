@@ -61,16 +61,13 @@ impl<Gamepad: DeserializableGamepad<Target = Gamepad>> DeserializablePacket for 
   }
 }
 
-// rust-analyzer might throw errors below, but it's fine
-// see https://github.com/rust-lang/rust-analyzer/issues/17040
-include!("../../snippet/deserialize.rs");
+// Use macro to implement DeserializableGamepad trait
+stickdeck_common::impl_deserializable_gamepad!(XGamepad, XButtons);
 
 #[cfg(test)]
 mod tests {
   use super::*;
 
-  // rust-analyzer might throw errors below, but it's fine
-  // see https://github.com/rust-lang/rust-analyzer/issues/17040
-  include!("../../snippet/serialize.rs");
-  include!("../../snippet/test_serialize_deserialize.rs");
+  // Use combined macro to implement SerializableGamepad trait and tests
+  stickdeck_common::impl_client_gamepad_tests!(XGamepad, XButtons);
 }
