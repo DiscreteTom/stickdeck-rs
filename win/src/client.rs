@@ -3,6 +3,8 @@ use std::{io::Read, net::TcpStream, sync::mpsc, thread};
 use stickdeck_common::{Mouse, Packet, PACKET_FRAME_SIZE};
 use vigem_client::{XButtons, XGamepad};
 
+stickdeck_common::impl_deserializable_gamepad!(XGamepad, XButtons);
+
 pub fn spawn(server: &str, tx: mpsc::SyncSender<Packet<XGamepad>>) {
   info!("Connecting to {} ...", server);
   let mut retry = 3;
@@ -61,16 +63,10 @@ impl<Gamepad: DeserializableGamepad<Target = Gamepad>> DeserializablePacket for 
   }
 }
 
-// rust-analyzer might throw errors below, but it's fine
-// see https://github.com/rust-lang/rust-analyzer/issues/17040
-include!("../../snippet/deserialize.rs");
-
 #[cfg(test)]
 mod tests {
   use super::*;
 
-  // rust-analyzer might throw errors below, but it's fine
-  // see https://github.com/rust-lang/rust-analyzer/issues/17040
-  include!("../../snippet/serialize.rs");
-  include!("../../snippet/test_serialize_deserialize.rs");
+  stickdeck_common::impl_serializable_gamepad!(XGamepad);
+  stickdeck_common::impl_test_serialize_deserialize!(XGamepad, XButtons);
 }

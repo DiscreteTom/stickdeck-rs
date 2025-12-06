@@ -1,5 +1,7 @@
 mod perf;
 
+mod gamepad_macros;
+
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq)]
 pub struct MouseButton(pub u8);
 
