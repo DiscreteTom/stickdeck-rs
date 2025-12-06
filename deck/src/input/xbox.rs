@@ -1,4 +1,5 @@
 use super::action::{InputAnalogAction, InputDigitalAction};
+use crate::error::Error;
 use crate::utils::check_handle;
 use steamworks::{ClientManager, Input};
 use steamworks_sys::InputHandle_t;
@@ -34,7 +35,7 @@ pub struct XBoxControls {
 
 impl XBoxControls {
   /// Return `Ok` if all handles are valid.
-  pub fn new(input: &Input<ClientManager>) -> Result<Self, ()> {
+  pub fn new(input: &Input<ClientManager>) -> Result<Self, Error> {
     Ok(Self {
       handle: check_handle(input.get_action_set_handle("XBoxControls"))?,
 
