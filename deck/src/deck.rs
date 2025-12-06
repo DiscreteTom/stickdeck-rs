@@ -1,4 +1,5 @@
 mod config;
+mod error;
 mod gamepad;
 mod input;
 mod server;

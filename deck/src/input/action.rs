@@ -1,3 +1,4 @@
+use crate::error::Error;
 use crate::utils::check_handle;
 use std::marker::PhantomData;
 use steamworks::{ClientManager, Input};
@@ -15,7 +16,7 @@ pub type InputDigitalAction = InputAction<InputDigitalActionData_t>;
 impl InputAnalogAction {
   /// Create a new analog action.
   /// Return [`Err`] if the handle is invalid.
-  pub fn new(input: &Input<ClientManager>, name: &'static str) -> Result<Self, ()> {
+  pub fn new(input: &Input<ClientManager>, name: &'static str) -> Result<Self, Error> {
     Ok(Self {
       name,
       handle: check_handle(input.get_analog_action_handle(name))?,
@@ -27,7 +28,7 @@ impl InputAnalogAction {
 impl InputDigitalAction {
   /// Create a new digital action.
   /// Return [`Err`] if the handle is invalid.
-  pub fn new(input: &Input<ClientManager>, name: &'static str) -> Result<Self, ()> {
+  pub fn new(input: &Input<ClientManager>, name: &'static str) -> Result<Self, Error> {
     Ok(Self {
       name,
       handle: check_handle(input.get_digital_action_handle(name))?,
