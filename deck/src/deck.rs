@@ -1,5 +1,5 @@
 mod config;
-pub mod error;
+mod error;
 mod gamepad;
 mod input;
 mod server;
