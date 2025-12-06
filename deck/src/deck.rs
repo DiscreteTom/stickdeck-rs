@@ -140,7 +140,7 @@ impl Application for App {
         )
         .on_press(Message::StartServer)
         .width(Length::Fill),
-        text(format!("stickdeck v{}", env!("CARGO_PKG_VERSION"))).size(20)
+        text(format!("stickdeck v{}", clap::crate_version!())).size(20)
       ]
       .padding([40, 80])
       .into(),
@@ -162,7 +162,7 @@ impl Application for App {
         .text_size(40),
         text(format!(
           "=== [stickdeck v{}] Server is listening at {}:{} ===",
-          env!("CARGO_PKG_VERSION"),
+          clap::crate_version!(),
           self.local_ip,
           self.port
         ))
