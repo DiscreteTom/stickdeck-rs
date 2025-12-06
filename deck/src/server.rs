@@ -1,4 +1,4 @@
-use crate::gamepad::{XButtons, XGamepad};
+use crate::gamepad::XGamepad;
 use log::info;
 use std::{
   io::{self, Write},
@@ -84,8 +84,8 @@ impl<Gamepad: SerializableGamepad> SerializablePacket for Packet<Gamepad> {
 #[cfg(test)]
 mod tests {
   use super::*;
+  use crate::gamepad::XButtons;
 
-  // Compose macros for deserialization and testing
   stickdeck_common::impl_deserializable_gamepad!(XGamepad, XButtons);
   stickdeck_common::impl_test_serialize_deserialize!(XGamepad, XButtons);
 }

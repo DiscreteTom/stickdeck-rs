@@ -1,6 +1,5 @@
 mod perf;
 
-#[macro_use]
 mod gamepad_macros;
 
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq)]

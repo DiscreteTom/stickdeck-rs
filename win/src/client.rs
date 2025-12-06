@@ -3,6 +3,8 @@ use std::{io::Read, net::TcpStream, sync::mpsc, thread};
 use stickdeck_common::{Mouse, Packet, PACKET_FRAME_SIZE};
 use vigem_client::{XButtons, XGamepad};
 
+stickdeck_common::impl_deserializable_gamepad!(XGamepad, XButtons);
+
 pub fn spawn(server: &str, tx: mpsc::SyncSender<Packet<XGamepad>>) {
   info!("Connecting to {} ...", server);
   let mut retry = 3;
@@ -61,15 +63,10 @@ impl<Gamepad: DeserializableGamepad<Target = Gamepad>> DeserializablePacket for 
   }
 }
 
-// Use macro to implement DeserializableGamepad trait
-stickdeck_common::impl_deserializable_gamepad!(XGamepad, XButtons);
-
 #[cfg(test)]
 mod tests {
   use super::*;
 
-  // Compose macros for serialization, deserialization, and testing
   stickdeck_common::impl_serializable_gamepad!(XGamepad);
-  stickdeck_common::impl_deserializable_gamepad!(XGamepad, XButtons);
   stickdeck_common::impl_test_serialize_deserialize!(XGamepad, XButtons);
 }
