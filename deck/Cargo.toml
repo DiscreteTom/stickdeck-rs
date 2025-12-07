@@ -1,21 +1,21 @@
 [package]
 name = "stickdeck"
-version = "0.3.1"
-edition = "2021"
+version.workspace = true
+edition.workspace = true
 
 [[bin]]
 name = "stickdeck"
 path = "src/deck.rs"
 
 [dependencies]
-clap = { version = "4.5", features = ["cargo", "derive"] }
+clap = { workspace = true }
 steamworks-sys = "0.10.0"
 steamworks = "0.10.0"
 iced = { version = "0.10", features = ["tokio"] }
 local-ip-address = "0.6.1"
-serde_json = "1.0.118"
-serde = { version = "1.0.203", features = ["derive"] }
-log = "0.4.21"
-env_logger = "0.11.3"
-stickdeck-common = { path = "../common" }
+serde_json = { workspace = true }
+serde = { workspace = true }
+log = { workspace = true }
+env_logger = { workspace = true }
+stickdeck-common = { workspace = true }
 tokio = { version = "1", features = ["full"] }

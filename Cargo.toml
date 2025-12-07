@@ -1,0 +1,19 @@
+[workspace]
+resolver = "2"
+members = [
+    "deck",
+    "win",
+    "common",
+]
+
+[workspace.package]
+version = "0.3.1"
+edition = "2021"
+
+[workspace.dependencies]
+clap = { version = "4.5", features = ["derive", "cargo"] }
+env_logger = "0.11.3"
+log = "0.4.21"
+serde = { version = "1.0.203", features = ["derive"] }
+serde_json = "1.0.118"
+stickdeck-common = { path = "common" }
