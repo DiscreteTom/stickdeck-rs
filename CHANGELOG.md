@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- CLI framework support with `--help` and `--version` flags (Client & Server)
+
 ## [0.3.1] - 2024-10-19
 
 ### Added
