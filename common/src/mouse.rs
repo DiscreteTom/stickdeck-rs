@@ -32,6 +32,8 @@ impl Mouse {
   /// Serialize the mouse movement data into a buffer.
   /// The buffer must be at least 4 bytes long.
   pub fn serialize(&self, buf: &mut [u8]) {
+    debug_assert!(buf.len() >= 4);
+
     buf[0] = self.x as u8;
     buf[1] = self.y as u8;
     buf[2] = self.buttons.0;
@@ -41,6 +43,8 @@ impl Mouse {
   /// Deserialize the mouse movement data from a buffer.
   /// The buffer must be at least 4 bytes long.
   pub fn deserialize(buf: &[u8]) -> Self {
+    debug_assert!(buf.len() >= 4);
+    
     Self {
       x: buf[0] as i8,
       y: buf[1] as i8,

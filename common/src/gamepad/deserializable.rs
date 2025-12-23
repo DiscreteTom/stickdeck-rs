@@ -6,6 +6,7 @@ macro_rules! impl_deserializable_gamepad {
     pub trait DeserializableGamepad {
       type Target;
       /// Deserialize the gamepad data from a buffer.
+      /// The buffer must be at least 12 bytes long.
       fn deserialize(buf: &[u8]) -> Self::Target;
     }
 
@@ -13,6 +14,8 @@ macro_rules! impl_deserializable_gamepad {
       type Target = Self;
 
       fn deserialize(buf: &[u8]) -> Self {
+        debug_assert!(buf.len() >= 12);
+
         Self {
           buttons: $XButtons {
             raw: u16::from_le_bytes(buf[0..2].try_into().unwrap()),

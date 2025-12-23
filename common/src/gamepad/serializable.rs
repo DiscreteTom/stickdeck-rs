@@ -11,6 +11,8 @@ macro_rules! impl_serializable_gamepad {
 
     impl SerializableGamepad for $XGamepad {
       fn serialize(&self, buf: &mut [u8]) {
+        debug_assert!(buf.len() >= 12);
+        
         buf[0..2].copy_from_slice(&self.buttons.raw.to_le_bytes());
         buf[2] = self.left_trigger;
         buf[3] = self.right_trigger;
