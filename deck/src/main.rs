@@ -29,7 +29,6 @@ struct Args {
 }
 
 fn main() {
-  let args = Args::parse();
   if env::var("RUST_LOG").is_err() {
     env::set_var("RUST_LOG", "info")
   }
@@ -38,6 +37,7 @@ fn main() {
   let (input_config_tx, input_config_rx) = mpsc::channel();
   input::spawn(input_config_rx).expect("Failed to spawn the input thread");
 
+  let args = Args::parse();
   App::run(Settings::with_flags(Flags {
     input_config_tx,
     config: Config::init(),
