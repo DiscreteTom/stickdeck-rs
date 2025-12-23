@@ -32,10 +32,10 @@ fn main() {
   info!("stickdeck-win v{}", clap::crate_version!());
   info!("See https://github.com/DiscreteTom/stickdeck-rs for more info.");
 
-  let (gamepad_tx, gamepad_rx) = mpsc::sync_channel(8);
+  let (packet_tx, packet_rx) = mpsc::sync_channel(8);
 
   // connect to the server
-  client::spawn(&format!("{}:{}", args.server, args.port), gamepad_tx);
+  client::spawn(&format!("{}:{}", args.server, args.port), packet_tx);
 
   let mut gamepad = GamepadController::new();
   info!("Virtual controller is ready");
@@ -44,12 +44,13 @@ fn main() {
 
   let mut now = Instant::now();
   let mut count = 0;
-  while let Ok(data) = gamepad_rx.recv() {
+
+  while let Ok(data) = packet_rx.recv() {
     trace!("Got {:?}", data);
 
     match data {
       Packet::Timestamp(_timestamp) => {} // TODO
-      Packet::Gamepad(data) => perf!("update controller", gamepad.apply(&data), 10),
+      Packet::Gamepad(data) => perf!("update gamepad", gamepad.apply(&data), 10),
       Packet::Mouse(data) => perf!("move mouse", mouse.apply(&data), 10),
     }
 

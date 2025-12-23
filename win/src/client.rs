@@ -5,19 +5,23 @@ use vigem_client::{XButtons, XGamepad};
 
 stickdeck_common::impl_deserializable_gamepad!(XGamepad, XButtons);
 
-pub fn spawn(server: &str, tx: mpsc::SyncSender<Packet<XGamepad>>) {
+pub fn spawn(server: &str, packet_tx: mpsc::SyncSender<Packet<XGamepad>>) {
   info!("Connecting to {} ...", server);
+
   let mut retry = 3;
   let mut stream = loop {
     if retry == 0 {
       panic!("Failed to connect to the server: retry limit exceeded");
     }
+
     if let Ok(stream) = TcpStream::connect(server) {
       break stream;
     }
+
     info!("Failed to connect to the server: retrying ...");
     retry -= 1;
   };
+
   info!("Connected");
 
   thread::spawn(move || {
@@ -25,7 +29,8 @@ pub fn spawn(server: &str, tx: mpsc::SyncSender<Packet<XGamepad>>) {
     while stream.read_exact(&mut buf).is_ok() {
       match Packet::deserialize(&buf) {
         Ok(packet) => {
-          tx.send(packet)
+          packet_tx
+            .send(packet)
             .expect("Failed to send data to the main thread");
         }
         Err(_) => {
