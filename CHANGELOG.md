@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - CLI framework support with `--help` and `--version` flags (Client & Server)
+- Configurable port via CLI parameters: `--port` / `-p` (Client & Server)
 
 ## [0.3.1] - 2024-10-19
 

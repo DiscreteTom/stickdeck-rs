@@ -22,10 +22,14 @@ use tokio::sync::watch;
 /// Turn your Steam Deck into a joystick for your PC, with trackpad and gyro support!
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
-struct Args {}
+struct Args {
+  /// Port to bind the server to
+  #[arg(short, long, default_value = "7777")]
+  port: u16,
+}
 
 fn main() {
-  let _args = Args::parse();
+  let args = Args::parse();
   if env::var("RUST_LOG").is_err() {
     env::set_var("RUST_LOG", "info")
   }
@@ -37,6 +41,7 @@ fn main() {
   App::run(Settings::with_flags(Flags {
     input_config_tx,
     config: Config::init(),
+    port: args.port,
   }))
   .expect("Failed to run the app");
 }
@@ -44,6 +49,7 @@ fn main() {
 struct Flags {
   input_config_tx: mpsc::Sender<InputConfig>,
   config: Config,
+  port: u16,
 }
 
 enum State {
@@ -84,7 +90,7 @@ impl Application for App {
     (
       App {
         local_ip: local_ip().expect("Failed to get local ip address"),
-        port: 7777,
+        port: flags.port,
         state: State::Home,
         content: "".into(),
         ui_tx,

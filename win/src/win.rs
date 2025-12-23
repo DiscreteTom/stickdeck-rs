@@ -18,6 +18,10 @@ struct Args {
   /// Server address to connect to
   #[arg(default_value = "steamdeck")]
   server: String,
+
+  /// Server port to connect to
+  #[arg(short, long, default_value = "7777")]
+  port: u16,
 }
 
 fn main() {
@@ -34,7 +38,7 @@ fn main() {
   let (gamepad_tx, gamepad_rx) = mpsc::sync_channel(8);
 
   // connect to the server
-  client::spawn(&format!("{}:{}", args.server, 7777), gamepad_tx);
+  client::spawn(&format!("{}:{}", args.server, args.port), gamepad_tx);
 
   let mut update_controller = init_controller();
   let mut move_mouse = init_mouse();
