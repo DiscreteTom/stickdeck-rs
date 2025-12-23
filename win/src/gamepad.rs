@@ -1,10 +1,10 @@
 use vigem_client::{Client, TargetId, XGamepad, Xbox360Wired};
 
-pub struct GamePadController {
+pub struct GamepadController {
   xbox: Xbox360Wired<Client>,
 }
 
-impl GamePadController {
+impl GamepadController {
   pub fn new() -> Self {
     let mut xbox = Xbox360Wired::new(
       Client::connect().expect("Failed to connect to the ViGEmBus driver"),

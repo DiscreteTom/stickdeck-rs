@@ -2,7 +2,7 @@ mod client;
 mod gamepad;
 mod mouse;
 
-use crate::{gamepad::GamePadController, mouse::MouseController};
+use crate::{gamepad::GamepadController, mouse::MouseController};
 use clap::Parser;
 use log::{debug, info, log_enabled, trace, Level};
 use std::{env, sync::mpsc, time::Instant};
@@ -37,7 +37,7 @@ fn main() {
   // connect to the server
   client::spawn(&format!("{}:{}", args.server, args.port), gamepad_tx);
 
-  let mut gamepad = GamePadController::new();
+  let mut gamepad = GamepadController::new();
   info!("Virtual controller is ready");
 
   let mut mouse = MouseController::new();
