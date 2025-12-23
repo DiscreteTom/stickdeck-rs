@@ -211,11 +211,16 @@ fn update_input<Data: InputActionData>(
   InputAction<Data>: UpdatableInputAction<Data>,
 {
   let data = action.update(input, *input_handle);
+
   if data.is_active() {
     if let Some(s) = ui_str.as_mut() {
       s.push_str(&format!("{}: {}\n", action.name, data.to_string()))
     }
     cb(&data);
+  } else {
+    if let Some(s) = ui_str.as_mut() {
+      s.push_str(&format!("{}: inactive\n", action.name))
+    }
   }
 }
 
