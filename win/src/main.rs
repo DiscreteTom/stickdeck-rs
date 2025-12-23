@@ -1,15 +1,17 @@
 mod client;
+mod controller;
 
 use clap::Parser;
 use log::{debug, info, log_enabled, trace, Level};
 use std::{env, sync::mpsc, time::Instant};
 use stickdeck_common::{perf, Mouse, MouseButton, Packet};
-use vigem_client::{Client, TargetId, XGamepad, Xbox360Wired};
 use windows::Win32::UI::Input::KeyboardAndMouse::{
   SendInput, INPUT, INPUT_0, INPUT_MOUSE, MOUSEEVENTF_LEFTDOWN, MOUSEEVENTF_LEFTUP,
   MOUSEEVENTF_MOVE, MOUSEEVENTF_RIGHTDOWN, MOUSEEVENTF_RIGHTUP, MOUSEEVENTF_WHEEL, MOUSEINPUT,
   MOUSE_EVENT_FLAGS,
 };
+
+use crate::controller::Controller;
 
 /// Turn your Steam Deck into a joystick for your PC, with trackpad and gyro support!
 #[derive(Parser, Debug)]
@@ -40,7 +42,9 @@ fn main() {
   // connect to the server
   client::spawn(&format!("{}:{}", args.server, args.port), gamepad_tx);
 
-  let mut update_controller = init_controller();
+  let mut controller = Controller::new();
+  info!("Virtual controller is ready");
+
   let mut move_mouse = init_mouse();
 
   let mut now = Instant::now();
@@ -50,7 +54,7 @@ fn main() {
 
     match data {
       Packet::Timestamp(_timestamp) => {} // TODO
-      Packet::Gamepad(gamepad) => perf!("update controller", update_controller(&gamepad), 10),
+      Packet::Gamepad(gamepad) => perf!("update controller", controller.apply(&gamepad), 10),
       Packet::Mouse(data) => perf!("move mouse", move_mouse(&data), 10),
     }
 
@@ -65,27 +69,6 @@ fn main() {
   }
 
   info!("Shutting down...");
-}
-
-fn init_controller() -> impl FnMut(&XGamepad) {
-  let mut xbox = Xbox360Wired::new(
-    Client::connect().expect("Failed to connect to the ViGEmBus driver"),
-    TargetId::XBOX360_WIRED,
-  );
-  xbox
-    .plugin()
-    .expect("Failed to plugin the virtual controller");
-  xbox
-    .wait_ready()
-    .expect("Failed to wait for the virtual controller to be ready");
-
-  info!("Virtual controller is ready");
-
-  move |data| {
-    xbox
-      .update(data)
-      .expect("Failed to update the virtual controller")
-  }
 }
 
 fn init_mouse() -> impl FnMut(&Mouse) {
