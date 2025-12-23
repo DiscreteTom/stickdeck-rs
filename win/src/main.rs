@@ -1,13 +1,12 @@
 mod client;
-mod controller;
+mod gamepad;
 mod mouse;
 
+use crate::{gamepad::GamePadController, mouse::MouseController};
 use clap::Parser;
 use log::{debug, info, log_enabled, trace, Level};
 use std::{env, sync::mpsc, time::Instant};
 use stickdeck_common::{perf, Packet};
-
-use crate::{controller::Controller, mouse::MouseController};
 
 /// Turn your Steam Deck into a joystick for your PC, with trackpad and gyro support!
 #[derive(Parser, Debug)]
@@ -38,7 +37,7 @@ fn main() {
   // connect to the server
   client::spawn(&format!("{}:{}", args.server, args.port), gamepad_tx);
 
-  let mut controller = Controller::new();
+  let mut gamepad = GamePadController::new();
   info!("Virtual controller is ready");
 
   let mut mouse = MouseController::new();
@@ -50,7 +49,7 @@ fn main() {
 
     match data {
       Packet::Timestamp(_timestamp) => {} // TODO
-      Packet::Gamepad(gamepad) => perf!("update controller", controller.apply(&gamepad), 10),
+      Packet::Gamepad(data) => perf!("update controller", gamepad.apply(&data), 10),
       Packet::Mouse(data) => perf!("move mouse", mouse.apply(&data), 10),
     }
 
