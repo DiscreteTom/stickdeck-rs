@@ -115,7 +115,7 @@ impl Application for App {
     }
   }
 
-  fn view(&self) -> Element<Message> {
+  fn view(&self) -> Element<'_, Message> {
     match self.state {
       State::Home => column![
         button(
