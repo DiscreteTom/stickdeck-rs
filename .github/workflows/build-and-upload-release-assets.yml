@@ -22,7 +22,7 @@ jobs:
       # zip files
       - run: |
           mkdir dist
-          cp deck/target/release/stickdeck dist/
+          cp target/release/stickdeck dist/
           chmod +x deck/scripts/setup.sh
           cp deck/scripts/setup.sh dist/
           chmod +x deck/scripts/launch.sh

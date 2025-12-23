@@ -20,7 +20,7 @@ jobs:
       - run: cd win && cargo build --release
 
       # zip files
-      - run: PowerShell.exe -NoProfile -Command "Compress-Archive -Path 'win\target\release\stickdeck-win.exe', 'win\scripts\debug.bat', 'win\scripts\launch.bat' -DestinationPath 'stickdeck-win-${{ inputs.version }}.zip'"
+      - run: PowerShell.exe -NoProfile -Command "Compress-Archive -Path 'target\release\stickdeck-win.exe', 'win\scripts\debug.bat', 'win\scripts\launch.bat' -DestinationPath 'stickdeck-win-${{ inputs.version }}.zip'"
 
       # delete the asset if it already exists
       - run: gh release delete-asset ${{ inputs.version }} stickdeck-win-${{ inputs.version }}.zip -y
