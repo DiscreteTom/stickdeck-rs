@@ -5,7 +5,7 @@ edition.workspace = true
 
 [[bin]]
 name = "stickdeck"
-path = "src/deck.rs"
+path = "src/main.rs"
 
 [dependencies]
 clap = { workspace = true }
