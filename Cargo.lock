@@ -2605,7 +2605,7 @@ checksum = "dee9311cd52318d225220e3f52414958fbac21b75541a6543d33fbdda68797b6"
 
 [[package]]
 name = "stickdeck"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "clap",
  "env_logger",
@@ -2622,11 +2622,11 @@ dependencies = [
 
 [[package]]
 name = "stickdeck-common"
-version = "0.3.1"
+version = "0.3.2"
 
 [[package]]
 name = "stickdeck-win"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "clap",
  "env_logger",
