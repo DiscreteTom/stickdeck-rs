@@ -16,7 +16,7 @@ Turn your Steam Deck into a joystick for your PC, with trackpad and gyro support
 > and you can also get automatic updates. -->
 
 > [!IMPORTANT]
-> The server side will be treated as a game on Steam Deck, so you can't play Steam games on PC while the server side is running on Steam Deck <ins>**_with the same Steam account_**</ins>. You can still play non-Steam games on PC, or you can register a new Steam account for the server side.
+> The server side will be treated as a game on Steam Deck, so if you're using the **same Steam account** on PC and Steam Deck, the Steam Deck should **enable offline mode** to avoid conflicts. Alternatively, you can register a new Steam account for the server side.
 
 <!-- #### Install from Steam (WIP)
 
@@ -30,7 +30,7 @@ Now you can proceed to the [client side setup](#client-side-pc). -->
 2. Download `stickdeck-vX.X.X.zip` from the [latest release](https://github.com/DiscreteTom/stickdeck-rs/releases/latest) and extract it.
 3. Run `setup.sh` in the extracted folder.
 4. Run `launch.sh` on Steam Deck, this should open a new window, but your input is not captured now. Close the window by tapping the `Exit` button.
-5. Start `Steam` client (NOT `Returning to Gaming Mode`) in the Desktop Mode. In your library, you should find a game called `Spacewar`. [Edit its input mapping](https://partner.steamgames.com/doc/features/steam_controller/getting_started_for_devs#14) so that all the inputs are mapped to the correct game actions.
+5. Start the `Steam` client (NOT `Returning to Gaming Mode`) in Desktop Mode. In your library, you should find a game called `Spacewar`. [Edit its input mapping](https://partner.steamgames.com/doc/features/steam_controller/getting_started_for_devs#14) so that all inputs are mapped to the correct game actions.
 6. Run `launch.sh` again, click `Start Server`, now you should see the input when you press buttons or move joysticks on Steam Deck.
 7. Now you can exit by tapping the `Exit` button. Next time you want to start the server, just run `launch.sh` and click `Start Server`.
 
@@ -46,14 +46,14 @@ Now you can proceed to the [client side setup](#client-side-pc). -->
 ### General
 
 1. Start the server on Steam Deck. Make sure the server is running and the input is captured.
-2. Make sure your PC and your Steam Deck are in the same network.
-3. Make sure the client on your PC is under the same minor version as the server on Steam Deck.
+2. Make sure your PC and Steam Deck are on the same network.
+3. Make sure the client on your PC is the same minor version as the server on Steam Deck.
 4. Run `launch.bat` on your PC. Once you see `Virtual controller is ready` in the console, StickDeck is ready.
 5. (Optional) If you want to test the controller, run `joy.cpl` (which is a built-in Windows joystick test tool).
 
 > [!NOTE]
-> By default the client will try to connect `steamdeck:7777`. If you want to connect to a different server, you can edit `launch.bat`, replace the `steamdeck` with your server IP.
-> You can find the server IP on the first line of the StickDeck UI window while the server is started.
+> By default, the client will try to connect to `steamdeck:7777`. If you want to connect to a different server, you can edit `launch.bat` and replace `steamdeck` with your server IP.
+> You can find the server IP on the first line of the StickDeck UI window when the server is started.
 
 ### Mouse Actions
 
@@ -63,9 +63,9 @@ and map any action to mouse buttons.
 ## FAQ
 
 - Poll/update rate?
-  - Depends on the configurable input update interval. In my case, set the input update interval to 3ms to reach the max update rate of 250+Hz.
-  - Besides, the server side will only send the input when there is a change, so the actual update rate will be lower than the configured rate.
-  - You can checkout the actual update rate on the PC side by running `debug.bat`.
+  - Depends on the configurable input update interval. In my case, setting the input update interval to 3ms reaches a max update rate of 250+Hz.
+  - The server side will only send input when there is a change, so the actual update rate will be lower than the configured rate.
+  - You can check the actual update rate on the PC side by running `debug.bat`.
 
 ## Credit
 
