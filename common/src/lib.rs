@@ -1,4 +1,4 @@
-mod gamepad_macros;
+mod gamepad;
 mod mouse;
 mod packet;
 mod perf;
