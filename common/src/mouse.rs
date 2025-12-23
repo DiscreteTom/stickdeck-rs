@@ -1,19 +1,25 @@
+/// Mouse button state.
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq)]
 pub struct MouseButton(pub u8);
 
 impl MouseButton {
+  // bit map
   pub const MOUSE_LEFT_BUTTON: u8 = 1;
   pub const MOUSE_RIGHT_BUTTON: u8 = 2;
 
-  pub fn left_button_down(&mut self) {
+  /// Mark the left button as down.
+  pub fn mark_left_button_down(&mut self) {
     self.0 |= Self::MOUSE_LEFT_BUTTON;
   }
+  /// Return if the left button is down.
   pub fn is_left_button_down(&self) -> bool {
     self.0 & Self::MOUSE_LEFT_BUTTON != 0
   }
-  pub fn right_button_down(&mut self) {
+  /// Mark the right button as down.
+  pub fn mark_right_button_down(&mut self) {
     self.0 |= Self::MOUSE_RIGHT_BUTTON;
   }
+  /// Return if the right button is down.
   pub fn is_right_button_down(&self) -> bool {
     self.0 & Self::MOUSE_RIGHT_BUTTON != 0
   }
@@ -44,7 +50,7 @@ impl Mouse {
   /// The buffer must be at least 4 bytes long.
   pub fn deserialize(buf: &[u8]) -> Self {
     debug_assert!(buf.len() >= 4);
-    
+
     Self {
       x: buf[0] as i8,
       y: buf[1] as i8,

@@ -104,8 +104,8 @@ pub fn spawn(input_rx: mpsc::Receiver<InputConfig>) -> SResult<()> {
         update_btn(&xbox.btn_b, &mut ctx, || *raw |= XButtons::B);
         update_btn(&xbox.btn_x, &mut ctx, || *raw |= XButtons::X);
         update_btn(&xbox.btn_y, &mut ctx, || *raw |= XButtons::Y);
-        update_btn(&xbox.btn_l_mouse, &mut ctx, || mb.left_button_down());
-        update_btn(&xbox.btn_r_mouse, &mut ctx, || mb.right_button_down());
+        update_btn(&xbox.btn_l_mouse, &mut ctx, || mb.mark_left_button_down());
+        update_btn(&xbox.btn_r_mouse, &mut ctx, || mb.mark_right_button_down());
 
         // analog actions
         update_input(&xbox.lt, &mut ctx, |data| {
